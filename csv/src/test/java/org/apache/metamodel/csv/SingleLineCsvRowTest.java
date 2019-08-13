@@ -18,6 +18,8 @@
  */
 package org.apache.metamodel.csv;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -25,13 +27,14 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.opencsv.CSVParser;
 
 public class SingleLineCsvRowTest {
 
@@ -40,8 +43,7 @@ public class SingleLineCsvRowTest {
         final List<Column> columns = new ArrayList<>();
         columns.add(new MutableColumn("1"));
         columns.add(new MutableColumn("2"));
-        CSVParser csvParser = new CSVParser();
-        final SingleLineCsvDataSet dataSet = new SingleLineCsvDataSet(null, csvParser, columns, null, 2, false);
+        final SingleLineCsvDataSet dataSet = new SingleLineCsvDataSet(null, columns, null, 2, new CsvConfiguration());
         final SingleLineCsvRow originalRow = new SingleLineCsvRow(dataSet, "foo,bar", 2, false, 1);
 
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -59,5 +61,25 @@ public class SingleLineCsvRowTest {
         final Object[] values1 = originalRow.getValues();
         final Object[] values2 = deserializedRow.getValues();
         Assert.assertArrayEquals(values1, values2);
+    }
+
+    @Test
+    public void testConcurrentAccess() throws Exception {
+        final List<Column> columns = new ArrayList<>();
+        columns.add(new MutableColumn("b").setColumnNumber(2));
+        columns.add(new MutableColumn("d").setColumnNumber(4));
+        columns.add(new MutableColumn("f").setColumnNumber(6));
+        columns.add(new MutableColumn("h").setColumnNumber(8));
+        columns.add(new MutableColumn("J").setColumnNumber(10));
+
+        try (final DataSet dataSet = new SingleLineCsvDataSet(FileHelper
+                .getBufferedReader(new FileResource("src/test/resources/empty_fields.csv").read(),
+                        FileHelper.UTF_8_CHARSET), columns, null, 11, new CsvConfiguration())) {
+            dataSet.toRows().parallelStream().forEach(row -> {
+                for (int i = 0; i < 5; i++) {
+                    assertEquals("", row.getValue(i));
+                }
+            });
+        }
     }
 }

@@ -41,23 +41,23 @@ import com.opencsv.ICSVParser;
 final class SingleLineCsvDataSet extends AbstractDataSet {
 
     private final BufferedReader _reader;
-    private final ICSVParser _csvParser;
     private final int _columnsInTable;
     private final boolean _failOnInconsistentRowLength;
-
+    private final CsvParserBuilder _csvParserBuilder;
+    
     private volatile int _rowNumber;
     private volatile Integer _rowsRemaining;
     private volatile Row _row;
 
-    public SingleLineCsvDataSet(BufferedReader reader, ICSVParser csvParser, List<Column> columns, Integer maxRows,
-                                int columnsInTable, boolean failOnInconsistentRowLength) {
+    public SingleLineCsvDataSet(final BufferedReader reader, final List<Column> columns, final Integer maxRows,
+            final int columnsInTable, final CsvConfiguration csvConfiguration) {
         super(columns.stream().map(SelectItem::new).collect(Collectors.toList()));
         _reader = reader;
-        _csvParser = csvParser;
         _columnsInTable = columnsInTable;
-        _failOnInconsistentRowLength = failOnInconsistentRowLength;
+        _failOnInconsistentRowLength = csvConfiguration.isFailOnInconsistentRowLength();
         _rowNumber = 0;
         _rowsRemaining = maxRows;
+        _csvParserBuilder = new CsvParserBuilder(csvConfiguration);
     }
 
     @Override
@@ -95,7 +95,7 @@ final class SingleLineCsvDataSet extends AbstractDataSet {
     }
 
     protected ICSVParser getCsvParser() {
-        return _csvParser;
+        return _csvParserBuilder.build();
     }
 
     public boolean nextInternal() {
