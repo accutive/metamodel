@@ -63,7 +63,7 @@ public abstract class AbstractRowInsertionBuilder<U extends UpdateCallback> exte
                 if (_table == column.getTable()) {
                     value(column, row.getValue(i));
                 } else {
-                    value(column.getName(), row.getValue(i));
+                    value(column.getQuotedName(), row.getValue(i));
                 }
             }
         }
@@ -81,7 +81,7 @@ public abstract class AbstractRowInsertionBuilder<U extends UpdateCallback> exte
             if (i != 0) {
                 sb.append(',');
             }
-            sb.append(columns[i].getName());
+            sb.append(columns[i].getQuotedName());
         }
         sb.append(") VALUES (");
         Object[] values = getValues();

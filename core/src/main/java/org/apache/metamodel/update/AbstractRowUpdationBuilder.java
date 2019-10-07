@@ -103,7 +103,7 @@ public abstract class AbstractRowUpdationBuilder extends AbstractRowBuilder<RowU
             if (i != 0) {
                 sb.append(',');
             }
-            sb.append(columns[i].getName());
+            sb.append(columns[i].getQuotedName());
             sb.append('=');
             sb.append(values[i] == null ? "NULL" : values[i].toString());
         }
