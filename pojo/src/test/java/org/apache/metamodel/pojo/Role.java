@@ -16,23 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.metamodel.util;
+package org.apache.metamodel.pojo;
 
-/**
- * A predicate is a special type of {@link Func}, used typically for
- * inclusion/exclusion criteria.
- * 
- * @param <E>
- * 
- * @deprecated use {@link java.util.function.Predicate} instead
- */
-@Deprecated
-@FunctionalInterface
-public interface Predicate<E> extends Func<E, Boolean>, java.util.function.Predicate<E> {
+class Role {
+    private int id; 
+    private String name;
 
-    @Override
-    default boolean test(E t) {
-        // delegate to the deprecated method signature
-        return eval(t);
+    public Role(final int id, final String name) {
+        this.name = name;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(final int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 }

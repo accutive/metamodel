@@ -47,7 +47,7 @@ under the License.
 	</scm>
 	<groupId>org.apache.metamodel</groupId>
 	<artifactId>MetaModel</artifactId>
-	<version>5.3.0</version>
+	<version>5.3.1</version>
 	<name>MetaModel</name>
 	<description>MetaModel is a library that encapsulates the differences and enhances 
 		the capabilities of different datastores. Rich querying abilities are
@@ -288,7 +288,7 @@ under the License.
 				</executions>
 				<configuration>
 					<excludePackageNames>com.sugarcrm.ws.soap</excludePackageNames>
-					<additionalparam>-Xdoclint:none</additionalparam>
+					<doclint>none</doclint>
 				</configuration>
 			</plugin>
 
