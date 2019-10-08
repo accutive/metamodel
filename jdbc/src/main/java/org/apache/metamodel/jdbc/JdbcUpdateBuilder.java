@@ -127,8 +127,7 @@ final class JdbcUpdateBuilder extends AbstractRowUpdationBuilder {
                 } else {
                     sb.append(',');
                 }
-                String columnName = columns[i].getName();
-                columnName = _updateCallback.quoteIfNescesary(columnName);
+                String columnName = columns[i].getQuotedName();
                 sb.append(columnName);
 
                 sb.append('=');

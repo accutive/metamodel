@@ -320,7 +320,7 @@ public class H2databaseTest extends TestCase {
                 cb.insertInto(writtenTableRef.get()).value("age", 14).value("name", "hello").value("id", 1).execute();
                 JdbcInsertBuilder insertBuilder = (JdbcInsertBuilder) cb.insertInto(writtenTableRef.get()).value("age",
                         15).value("name", "wor'ld").value("id", 2);
-                assertEquals("INSERT INTO PUBLIC.\"TEST_TABLE\" (ID,NAME,AGE) VALUES (?,?,?)", insertBuilder
+                assertEquals("INSERT INTO PUBLIC.\"TEST_TABLE\" (\"ID\",\"NAME\",\"AGE\") VALUES (?,?,?)", insertBuilder
                         .createSqlStatement());
                 insertBuilder.execute();
                 cb.insertInto(writtenTableRef.get()).value("age", 16).value("name", "escobar!").value("id", 3)
@@ -343,7 +343,7 @@ public class H2databaseTest extends TestCase {
             public void run(UpdateCallback callback) {
                 JdbcUpdateBuilder updateCallback = (JdbcUpdateBuilder) callback.update("test_table").value("age", 18)
                         .where("id").greaterThan(1);
-                assertEquals("UPDATE PUBLIC.\"TEST_TABLE\" SET AGE=? WHERE \"TEST_TABLE\".\"ID\" > ?", updateCallback
+                assertEquals("UPDATE PUBLIC.\"TEST_TABLE\" SET \"AGE\"=? WHERE \"TEST_TABLE\".\"ID\" > ?", updateCallback
                         .createSqlStatement());
                 updateCallback.execute();
             }

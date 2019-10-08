@@ -116,8 +116,7 @@ final class JdbcInsertBuilder extends AbstractRowInsertionBuilder<JdbcUpdateCall
 				} else {
 					sb.append(',');
 				}
-				String columnName = columns[i].getName();
-				columnName = getUpdateCallback().quoteIfNescesary(columnName);
+				String columnName = columns[i].getQuotedName();
 				sb.append(columnName);
 			}
 		}
