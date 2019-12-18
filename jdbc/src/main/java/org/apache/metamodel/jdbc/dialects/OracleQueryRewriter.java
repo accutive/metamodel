@@ -18,8 +18,12 @@
  */
 package org.apache.metamodel.jdbc.dialects;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.metamodel.jdbc.JdbcDataContext;
 import org.apache.metamodel.query.FilterItem;
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 
 /**
@@ -27,7 +31,7 @@ import org.apache.metamodel.schema.ColumnType;
  */
 public class OracleQueryRewriter extends OffsetFetchQueryRewriter {
 
-    public static final int FIRST_FETCH_SUPPORTING_VERSION = 12;
+	public static final int FIRST_FETCH_SUPPORTING_VERSION = 12;
 
     public OracleQueryRewriter(JdbcDataContext dataContext) {
         super(dataContext, FIRST_FETCH_SUPPORTING_VERSION, false);
@@ -99,4 +103,27 @@ public class OracleQueryRewriter extends OffsetFetchQueryRewriter {
             return super.rewriteFilterItem(item);
         }
     }
+    
+	@Override
+	public Object getResultSetValue(ResultSet resultSet, int columnIndex, Column column) throws SQLException {
+        // For Oracle CLOB and BLOB objects, the "value" is only a pointer to the actual data.
+        // If the destination insert is on a different instance than the source, this pointer
+        // will not reference an actual object on the database server, and an exception will
+        // be thrown. If the destination data store is not Oracle, the resulting CLOB/BLOB
+		// column will not have the correct binary data.
+		// Replace the value object with an actual copy of the data.
+		// See Oracle bug 29126086 (ORA-00942 Received when PreparedStatement.setClob used)
+		// (not technically a bug, but a nasty side effect of a clever Oracle optimization)
+       if (column.getNativeType() != null) {
+            switch (column.getNativeType()) {
+            case "clob":
+                return resultSet.getClob(columnIndex).getCharacterStream();
+            case "blob":
+                return resultSet.getBlob(columnIndex).getBinaryStream();
+            }
+        }
+        return super.getResultSetValue(resultSet, columnIndex, column);
+    }
+
+
 }
