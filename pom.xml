@@ -47,7 +47,7 @@ under the License.
 	</scm>
 	<groupId>org.apache.metamodel</groupId>
 	<artifactId>MetaModel</artifactId>
-	<version>5.3.1</version>
+	<version>5.3.1b</version>
 	<name>MetaModel</name>
 	<description>MetaModel is a library that encapsulates the differences and enhances 
 		the capabilities of different datastores. Rich querying abilities are
@@ -174,33 +174,20 @@ under the License.
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
-	<distributionManagement>
-		<repository>
-			<id>apache.releases.https</id>
-			<name>Apache Release Distribution Repository</name>
-			<url>https://repository.apache.org/service/local/staging/deploy/maven2</url>
-		</repository>
-		<snapshotRepository>
-			<id>apache.snapshots.https</id>
-			<name>Apache Development Snapshot Repository</name>
-			<url>https://repository.apache.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 
-	<repositories>
-		<repository>
-			<id>apache.snapshots</id>
-			<url>http://repository.apache.org/snapshots/</url>
-			<name>Apache Snapshot Repo</name>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
-
+<distributionManagement>
+    <repository>
+        <id>central</id>
+        <name>sharedservices-releases</name>
+        <url>http://10.11.12.101:8081/artifactory/libs-release-local</url>
+    </repository>    
+    <snapshotRepository>
+      <id>accutive.snapshots.https</id>
+      <name>Accutive Development Snapshot Repository</name>
+      <url>http://10.11.12.101:8081/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
+    
+</distributionManagement>
 	<build>
 		<plugins>
 			<plugin>
@@ -226,9 +213,21 @@ under the License.
 					</execution>
 				</executions>
 			</plugin>
-
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+<!--
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
+ 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
@@ -242,7 +241,7 @@ under the License.
 					</dependency>
 				</dependencies>
 			</plugin>
-
+ -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
