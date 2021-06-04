@@ -55,7 +55,7 @@ public abstract class AbstractElasticSearchDataSet extends AbstractDataSet {
     @Override
     public void close() {
         super.close();
-        boolean closeNow = _closed.compareAndSet(true, false);
+        final boolean closeNow = _closed.compareAndSet(false, true);
         if (closeNow) {
             closeNow();
         }
@@ -89,7 +89,7 @@ public abstract class AbstractElasticSearchDataSet extends AbstractDataSet {
 
         final String scrollId = _searchResponse.getScrollId();
         if (scrollId == null) {
-            // this search response is not scrolleable - then it's the end.
+            // this search response is not scrollable - then it's the end.
             _currentHit = null;
             return false;
         }
@@ -115,7 +115,7 @@ public abstract class AbstractElasticSearchDataSet extends AbstractDataSet {
             return null;
         }
 
-        final Map<String, Object> source = _currentHit.getSource();
+        final Map<String, Object> source = _currentHit.getSourceAsMap();
         final String documentId = _currentHit.getId();
         return ElasticSearchUtils.createRow(source, documentId, getHeader());
     }

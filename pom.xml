@@ -27,9 +27,9 @@ under the License.
 		<junit.version>4.12</junit.version>
 		<guava.version>27.0.1-jre</guava.version>
 		<hadoop.version>3.1.1</hadoop.version>
-		<jackson.version>2.6.7</jackson.version>
+		<jackson.version>2.10.1</jackson.version>
 		<easymock.version>3.2</easymock.version>
-		<spring.version>4.2.6.RELEASE</spring.version>
+		<spring.version>5.2.2.RELEASE</spring.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<docker-maven-plugin.version>0.23.0</docker-maven-plugin.version>
 		<skipTests>false</skipTests>
@@ -43,11 +43,11 @@ under the License.
 		<url>https://gitbox.apache.org/repos/asf/metamodel.git</url>
 		<connection>https://gitbox.apache.org/repos/asf/metamodel.git</connection>
 		<developerConnection>scm:git:https://gitbox.apache.org/repos/asf/metamodel.git</developerConnection>
-		<tag>MetaModel-5.3.1</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<groupId>org.apache.metamodel</groupId>
 	<artifactId>MetaModel</artifactId>
-	<version>5.3.1b</version>
+	<version>5.3.4-ACCUTIVE</version>
 	<name>MetaModel</name>
 	<description>MetaModel is a library that encapsulates the differences and enhances 
 		the capabilities of different datastores. Rich querying abilities are
@@ -174,6 +174,35 @@ under the License.
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
+<<<<<<< HEAD
+=======
+	<distributionManagement>
+		<repository>
+			<id>apache.releases.https</id>
+			<name>Apache Release Distribution Repository</name>
+			<url>https://repository.apache.org/service/local/staging/deploy/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>apache.snapshots.https</id>
+			<name>Apache Development Snapshot Repository</name>
+			<url>https://repository.apache.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>apache.snapshots</id>
+			<url>https://repository.apache.org/snapshots/</url>
+			<name>Apache Snapshot Repo</name>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+	</repositories>
+>>>>>>> e7092ff33c4c598d61e98b7ffd092508ca044645
 
 <distributionManagement>
     <repository>

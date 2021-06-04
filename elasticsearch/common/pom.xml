@@ -13,7 +13,11 @@
 	<parent>
 		<artifactId>MetaModel-elasticsearch</artifactId>
 		<groupId>org.apache.metamodel</groupId>
+<<<<<<< HEAD
 		<version>5.3.1b</version>
+=======
+		<version>5.3.4-SNAPSHOT</version>
+>>>>>>> e7092ff33c4c598d61e98b7ffd092508ca044645
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +37,11 @@
 			<artifactId>elasticsearch</artifactId>
 			<version>${elasticsearch.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.25</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

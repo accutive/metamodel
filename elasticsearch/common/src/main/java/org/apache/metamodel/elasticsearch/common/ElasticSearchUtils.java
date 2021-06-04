@@ -81,11 +81,8 @@ public class ElasticSearchUtils {
             propertiesMap.put(fieldName, propertyMap);
         }
 
-        HashMap<String, Map<String, Map<String, String>>> docTypeMap = new HashMap<>();
-        docTypeMap.put("properties", propertiesMap);
-        
-        final Map<String, Map<String, Map<String, Map<String, String>>>> mapping = new HashMap<>();
-        mapping.put(table.getName(), docTypeMap);
+        final Map<String, Map<String, Map<String, String>>> mapping = new HashMap<>();
+        mapping.put(ElasticSearchMetaData.PROPERTIES_KEY, propertiesMap);
         return mapping;
     }
 
@@ -173,57 +170,18 @@ public class ElasticSearchUtils {
      * @return a {@link QueryBuilder} if one was produced, or null if the items
      *         could not be pushed down to an ElasticSearch query
      */
-    public static QueryBuilder createQueryBuilderForSimpleWhere(List<FilterItem> whereItems,
-            LogicalOperator logicalOperator) {
+    public static QueryBuilder createQueryBuilderForSimpleWhere(final List<FilterItem> whereItems,
+            final LogicalOperator logicalOperator) {
         if (whereItems.isEmpty()) {
             return QueryBuilders.matchAllQuery();
         }
 
-        List<QueryBuilder> children = new ArrayList<>(whereItems.size());
-        for (FilterItem item : whereItems) {
-            final QueryBuilder itemQueryBuilder;
-
-            if (item.isCompoundFilter()) {
-                final List<FilterItem> childItems = Arrays.asList(item.getChildItems());
-                itemQueryBuilder = createQueryBuilderForSimpleWhere(childItems, item.getLogicalOperator());
-                if (itemQueryBuilder == null) {
-                    // something was not supported, so we have to forfeit here
-                    // too.
-                    return null;
-                }
-            } else {
-                final Column column = item.getSelectItem().getColumn();
-                if (column == null) {
-                    // unsupported type of where item - must have a column
-                    // reference
-                    return null;
-                }
-                final String fieldName = column.getName();
-                final Object operand = item.getOperand();
-                final OperatorType operator = item.getOperator();
-
-                if (OperatorType.EQUALS_TO.equals(operator)) {
-                    if (operand == null) {
-                        itemQueryBuilder = getMissingQuery(fieldName);
-                    } else {
-                        itemQueryBuilder = QueryBuilders.termQuery(fieldName, operand);
-                    }
-                } else if (OperatorType.DIFFERENT_FROM.equals(operator)) {
-                    if (operand == null) {
-                        itemQueryBuilder = getExistsQuery(fieldName);
-                    } else {
-                        itemQueryBuilder = QueryBuilders.boolQuery().mustNot(QueryBuilders.termQuery(fieldName,
-                                operand));
-                    }
-                } else if (OperatorType.IN.equals(operator)) {
-                    final List<?> operands = CollectionUtils.toList(operand);
-                    itemQueryBuilder = QueryBuilders.termsQuery(fieldName, operands);
-                } else {
-                    // not (yet) support operator types
-                    return null;
-                }
+        final List<QueryBuilder> children = new ArrayList<>(whereItems.size());
+        for (final FilterItem item : whereItems) {
+            final QueryBuilder itemQueryBuilder = createFilterItemQueryBuilder(item);
+            if (itemQueryBuilder == null) {
+                return null;
             }
-
             children.add(itemQueryBuilder);
         }
 
@@ -246,6 +204,69 @@ public class ElasticSearchUtils {
         return result;
     }
 
+    private static QueryBuilder createFilterItemQueryBuilder(final FilterItem filterItem) {
+        final QueryBuilder itemQueryBuilder;
+        if (filterItem.isCompoundFilter()) {
+            final List<FilterItem> childItems = Arrays.asList(filterItem.getChildItems());
+            itemQueryBuilder = createQueryBuilderForSimpleWhere(childItems, filterItem.getLogicalOperator());
+        } else {
+            final Column column = filterItem.getSelectItem().getColumn();
+            if (column == null) {
+                // unsupported type of where item - must have a column reference
+                return null;
+            }
+            itemQueryBuilder = createQueryBuilderForOperator(filterItem, column);
+        }
+
+        return itemQueryBuilder;
+    }
+
+    private static QueryBuilder createQueryBuilderForOperator(final FilterItem filterItem, final Column column) {
+        if (OperatorType.EQUALS_TO.equals(filterItem.getOperator())) {
+            if (filterItem.getOperand() == null) {
+                return getMissingQuery(column.getName());
+            } else if (column.getType().isLiteral() && filterItem.getOperand().equals("")) {
+                return QueryBuilders.boolQuery().mustNot(QueryBuilders.wildcardQuery(column.getName(), "?*"));
+            } else {
+                return matchOrTermQuery(column, filterItem.getOperand());
+            }
+        } else if (OperatorType.DIFFERENT_FROM.equals(filterItem.getOperator())) {
+            if (filterItem.getOperand() == null) {
+                return getExistsQuery(column.getName());
+            } else if (column.getType().isLiteral() && filterItem.getOperand().equals("")) {
+                return QueryBuilders.boolQuery().must(QueryBuilders.wildcardQuery(column.getName(), "?*"));
+            } else {
+                return QueryBuilders.boolQuery().mustNot(matchOrTermQuery(column, filterItem.getOperand()));
+            }
+        } else if (OperatorType.IN.equals(filterItem.getOperator())) {
+            final List<?> operands = CollectionUtils.toList(filterItem.getOperand());
+            if (column.getType().isLiteral()) {
+                return createMultipleValuesQueryBuilder(column.getName(), operands);
+            } else {
+                return QueryBuilders.termsQuery(column.getName(), operands);
+            }
+        } else {
+            // not (yet) supported operator types
+            return null;
+        }
+    }
+
+    private static QueryBuilder matchOrTermQuery(final Column column, final Object operand) {
+        if (column.getType().isLiteral() && operand != null && !operand.equals("")) {
+            return QueryBuilders.matchQuery(column.getName(), operand);
+        } else {
+            return QueryBuilders.termQuery(column.getName(), operand);
+        }
+    }
+
+    private static QueryBuilder createMultipleValuesQueryBuilder(final String columnName, final List<?> operands) {
+        final BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        for (final Object value : operands) {
+            boolQueryBuilder.should(QueryBuilders.matchQuery(columnName, value.toString()));
+        }
+        return boolQueryBuilder;
+    }
+
     public static ColumnType getColumnTypeFromElasticSearchType(final String metaDataFieldType) {
         final ColumnType columnType;
         if (metaDataFieldType.startsWith("date")) {
@@ -266,6 +287,10 @@ public class ElasticSearchUtils {
         return columnType;
     }
 
+    /**
+     * Creates and returns a {@link Row} for the given sourceMap, using the documentId as primary key and the header as
+     * definition of which columns are added to the row. 
+     */
     public static Row createRow(final Map<String, Object> sourceMap, final String documentId, final DataSetHeader header) {
         final Object[] values = new Object[header.size()];
         for (int i = 0; i < values.length; i++) {
@@ -279,21 +304,54 @@ public class ElasticSearchUtils {
             if (column.isPrimaryKey()) {
                 values[i] = documentId;
             } else {
-                Object value = sourceMap.get(column.getName());
+                if (sourceMap != null) {
+                    final Object value = sourceMap.get(column.getName());
 
-                if (column.getType() == ColumnType.DATE) {
-                    Date valueToDate = ElasticSearchDateConverter.tryToConvert((String) value);
-                    if (valueToDate == null) {
-                        values[i] = value;
+                    if (column.getType() == ColumnType.DATE) {
+                        final Date valueToDate = ElasticSearchDateConverter.tryToConvert((String) value);
+                        if (valueToDate == null) {
+                            values[i] = value;
+                        } else {
+                            values[i] = valueToDate;
+                        }
+                    } else if (column.getType() == ColumnType.MAP && value == null) {
+                        // Because of a bug in Elasticsearch, when field names contain dots, it's possible that the
+                        // mapping of the index described a column to be of the type "MAP", while it's based on a number
+                        // of fields containing dots in their name. In this case we may have to work around that
+                        // inconsistency by creating column names with dots ourselves, based on the schema.
+                        final Map<String, Object> valueMap = new HashMap<>();
+
+                        sourceMap
+                                .keySet()
+                                .stream()
+                                .filter(fieldName -> fieldName.startsWith(column.getName() + "."))
+                                .forEach(fieldName -> evaluateField(sourceMap, valueMap, fieldName, fieldName
+                                        .substring(fieldName.indexOf('.') + 1)));
+
+                        if (!valueMap.isEmpty()) {
+                            values[i] = valueMap;
+                        }
                     } else {
-                        values[i] = valueToDate;
+                        values[i] = value;
                     }
-                } else {
-                    values[i] = value;
                 }
             }
         }
 
         return new DefaultRow(header, values);
+    }
+
+    private static void evaluateField(final Map<String, Object> sourceMap, final Map<String, Object> valueMap,
+            final String sourceFieldName, final String subFieldName) {
+        if (subFieldName.contains(".")) {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> nestedValueMap = (Map<String, Object>) valueMap
+                    .computeIfAbsent(subFieldName.substring(0, subFieldName.indexOf('.')), key -> new HashMap<>());
+
+            evaluateField(sourceMap, nestedValueMap, sourceFieldName, subFieldName
+                    .substring(subFieldName.indexOf('.') + 1));
+        } else {
+            valueMap.put(subFieldName, sourceMap.get(sourceFieldName));
+        }
     }
 }

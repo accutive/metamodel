@@ -77,7 +77,7 @@ public abstract class AbstractDataContext implements DataContext {
         for (final String name : schemaNames) {
             final Schema schema = _schemaCache.get(getSchemaCacheKey(name));
             if (schema == null) {
-                final Schema newSchema = getSchemaByName(name);
+                final Schema newSchema = getSchemaByNameInternal(name);
                 if (newSchema == null) {
                     throw new MetaModelException("Declared schema does not exist: " + name);
                 }
@@ -279,8 +279,8 @@ public abstract class AbstractDataContext implements DataContext {
         for (final String schemaName : schemaNames) {
             if (schemaName != null) {
                 // search case-insensitive
-                String schameNameInLowerCase = schemaName.toLowerCase();
-                Column col = searchColumn(schameNameInLowerCase, columnName, columnNameInLowerCase);
+                String schemaNameInLowerCase = schemaName.toLowerCase();
+                Column col = searchColumn(schemaNameInLowerCase, columnName, columnNameInLowerCase);
                 if (col != null) {
                     return col;
                 }
@@ -307,26 +307,24 @@ public abstract class AbstractDataContext implements DataContext {
      *            in case of case-insensitive search)
      * @return
      */
-    private Column searchColumn(String schemaNameSearch, String columnNameOriginal, String columnNameSearch) {
-        if (columnNameSearch.startsWith(schemaNameSearch)) {
-            Schema schema = getSchemaByName(schemaNameSearch);
-            if (schema != null) {
+    private Column searchColumn(final String schemaNameSearch, final String columnNameOriginal,
+            final String columnNameSearch) {
+        final Schema schema = getSchemaByName(schemaNameSearch);
+        if (schema != null) {
+            if (columnNameSearch.equals(schemaNameSearch)) {
+                return getColumn(schema, columnNameSearch);
+            } else if (columnNameSearch.startsWith(schemaNameSearch)) {
                 String tableAndColumnPath = columnNameOriginal.substring(schemaNameSearch.length());
-
                 if (tableAndColumnPath.charAt(0) == '.') {
                     tableAndColumnPath = tableAndColumnPath.substring(1);
-
-                    Column column = getColumn(schema, tableAndColumnPath);
-                    if (column != null) {
-                        return column;
-                    }
+                    return getColumn(schema, tableAndColumnPath);
                 }
             }
         }
         return null;
     }
 
-    private final Column getColumn(final Schema schema, final String tableAndColumnPath) {
+    private Column getColumn(final Schema schema, final String tableAndColumnPath) {
         Table table = null;
         String columnPath = tableAndColumnPath;
         final List<String> tableNames = schema.getTableNames();
@@ -465,18 +463,18 @@ public abstract class AbstractDataContext implements DataContext {
                 currentToken.setLength(0);
 
                 if (tokens.size() > expectedParts) {
-                    // unsuccesfull - return null
+                    // unsuccessful - return null
                     return null;
                 }
             } else if (c == '"') {
                 if (inQuotes) {
                     if (i + 1 < path.length() && path.charAt(i + 1) != '.') {
-                        // unsuccesfull - return null
+                        // unsuccessful - return null
                         return null;
                     }
                 } else {
                     if (currentToken.length() > 0) {
-                        // unsuccesfull - return null
+                        // unsuccessful - return null
                         return null;
                     }
                 }

@@ -1,3 +1,25 @@
+### Apache MetaModel [WIP]
+
+ * [METAMODEL-1236] - Elasticsearch: not/empty and is/not null do not work for text based columns
+ * [METAMODEL-1235] - Elasticsearch: "String index out of range" when schema name and column name are equal
+ * [METAMODEL-1232] - Improve stability of Travis CI builds
+
+### Apache MetaModel 5.3.3
+
+ * [METAMODEL-1233] - Elasticsearch: "term" query is used for text search.
+ * [METAMODEL-1229] - FixedWidth works with UrlResource/HttpInputStream.
+ * [METAMODEL-1228] - Better handling of fieldnames with dots in Elasticsearch
+ * [METAMODEL-1227] - Better handling of nested objects in Elasticsearch data
+ * [METAMODEL-1224] - Ensured compatibility with newer versions of PostgreSQL
+
+### Apache MetaModel 5.3.2
+
+ * Upgrade to Jackson 2.10.1
+ * Upgrade to Spring 5.2.2
+ * [METAMODEL-82] - Detect Column Types with Excel datastores
+ * [METAMODEL-1221] - Upgrade to Elasticsearch 7.3
+ * Bind Travis build to Trusty distribution to avoid CI build failures.
+
 ### Apache MetaModel 5.3.1
 
  * [METAMODEL-1219] - Improved returning schemas for SQL Server.
