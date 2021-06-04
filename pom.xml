@@ -174,35 +174,6 @@ under the License.
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
-<<<<<<< HEAD
-=======
-	<distributionManagement>
-		<repository>
-			<id>apache.releases.https</id>
-			<name>Apache Release Distribution Repository</name>
-			<url>https://repository.apache.org/service/local/staging/deploy/maven2</url>
-		</repository>
-		<snapshotRepository>
-			<id>apache.snapshots.https</id>
-			<name>Apache Development Snapshot Repository</name>
-			<url>https://repository.apache.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>apache.snapshots</id>
-			<url>https://repository.apache.org/snapshots/</url>
-			<name>Apache Snapshot Repo</name>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
->>>>>>> e7092ff33c4c598d61e98b7ffd092508ca044645
 
 <distributionManagement>
     <repository>

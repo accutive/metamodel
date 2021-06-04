@@ -550,19 +550,16 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
     }
 
     private int getFetchSize(Query query, final Statement statement) {
-        int fetchSize = _fetchSizeCalculator.getFetchSize(query);
         try {
             final int defaultFetchSize = statement.getFetchSize();
-            if (DATABASE_PRODUCT_MYSQL.equals(_databaseProductName) 
-            		&& defaultFetchSize == 0
-            		&& fetchSize > 1) {
-                return Integer.MIN_VALUE;
+            if (DATABASE_PRODUCT_MYSQL.equals(_databaseProductName) && defaultFetchSize == Integer.MIN_VALUE) {
+                return defaultFetchSize;
             }
         } catch (Exception e) {
             // exceptions here are ignored.
             logger.debug("Ignoring exception while getting fetch size", e);
         }
-        return fetchSize;
+        return _fetchSizeCalculator.getFetchSize(query);
     }
 
     /**

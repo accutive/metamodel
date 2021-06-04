@@ -200,7 +200,7 @@ public class FromItem extends BaseObject implements QueryItem, Cloneable {
     @Override
     public String toSql(boolean includeSchemaInColumnPaths) {
         final String stringNoAlias = toStringNoAlias(includeSchemaInColumnPaths);
-        final StringBuilder sb = new StringBuilder(stringNoAlias);
+        final StringBuilder sgitb = new StringBuilder(stringNoAlias);
         if (_join != null && _alias != null) {
             sb.insert(0, '(');
             sb.append(')');

@@ -21,11 +21,7 @@ under the License.
 	<parent>
 		<artifactId>MetaModel-mongodb</artifactId>
 		<groupId>org.apache.metamodel</groupId>
-<<<<<<< HEAD
-		<version>5.3.1b</version>
-=======
-		<version>5.3.4-SNAPSHOT</version>
->>>>>>> e7092ff33c4c598d61e98b7ffd092508ca044645
+		<version>5.3.4-ACCUTIVE</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>MetaModel-mongodb-mongo3</artifactId>
