@@ -147,7 +147,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
         assertEquals(
                 "SELECT a._CUSTOMERNUMBER_, a._CUSTOMERNAME_, a._CONTACTLASTNAME_, a._CONTACTFIRSTNAME_, a._PHONE_, "
                         + "a._ADDRESSLINE1_, a._ADDRESSLINE2_, a._CITY_, a._STATE_, a._POSTALCODE_, a._COUNTRY_, "
-                        + "a._SALESREPEMPLOYEENUMBER_, a._CREDITLIMIT_ FROM PUBLIC._CUSTOMERS_ a", q.toString()
+                        + "a._SALESREPEMPLOYEENUMBER_, a._CREDITLIMIT_ FROM _PUBLIC_._CUSTOMERS_ a", q.toString()
                         .replace('\"', '_'));
         DataSet result = strategy.executeQuery(q);
         assertTrue(result.next());
@@ -191,7 +191,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
                 "SELECT a._CUSTOMERNUMBER_, a._CUSTOMERNAME_, a._CONTACTLASTNAME_, a._CONTACTFIRSTNAME_, a._PHONE_, "
                         + "a._ADDRESSLINE1_, a._ADDRESSLINE2_, a._CITY_, "
                         + "a._STATE_, a._POSTALCODE_, a._COUNTRY_, a._SALESREPEMPLOYEENUMBER_, "
-                        + "a._CREDITLIMIT_ FROM PUBLIC._CUSTOMERS_ a WHERE a._CUSTOMERNUMBER_ = ? "
+                        + "a._CREDITLIMIT_ FROM _PUBLIC_._CUSTOMERS_ a WHERE a._CUSTOMERNUMBER_ = ? "
                         + "AND a._CUSTOMERNAME_ = ?", compliedQueryString.replace('\"', '_'));
         DataSet result1 = dataContext.executeQuery(compiledQuery, new Object[] { 103, "Atelier graphique" });
         assertTrue(result1.next());
@@ -255,7 +255,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
         } catch (MetaModelException e) {
             assertEquals(
                     "Scalar functions outside of SELECT clause is not supported for JDBC databases. Query rejected: "
-                            + "SELECT \"CUSTOMERS\".\"CUSTOMERNUMBER\" FROM PUBLIC.\"CUSTOMERS\" WHERE TO_BOOLEAN(\"CUSTOMERS\".\"CREDITLIMIT\") = TRUE",
+                            + "SELECT \"CUSTOMERS\".\"CUSTOMERNUMBER\" FROM \"PUBLIC\".\"CUSTOMERS\" WHERE TO_BOOLEAN(\"CUSTOMERS\".\"CREDITLIMIT\") = TRUE",
                     e.getMessage());
         }
     }
@@ -268,7 +268,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
             fail("Exception expected");
         } catch (MetaModelException e) {
             assertEquals("Aggregate function 'RANDOM' is not supported on this JDBC database. Query rejected: "
-                    + "SELECT RANDOM(\"CUSTOMERS\".\"CUSTOMERNUMBER\") FROM PUBLIC.\"CUSTOMERS\"", e.getMessage());
+                    + "SELECT RANDOM(\"CUSTOMERS\".\"CUSTOMERNUMBER\") FROM \"PUBLIC\".\"CUSTOMERS\"", e.getMessage());
         }
     }
 
@@ -294,7 +294,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
 
         String compliedQueryString = compiledQuery.toSql();
 
-        assertEquals("SELECT COUNT(*) FROM PUBLIC._CUSTOMERS_ a WHERE a._CREDITLIMIT_ >= ?",
+        assertEquals("SELECT COUNT(*) FROM _PUBLIC_._CUSTOMERS_ a WHERE a._CREDITLIMIT_ >= ?",
                 compliedQueryString.replace('\"', '_'));
 
         DataSet result1 = dataContext.executeQuery(compiledQuery, new Object[] { 11000 });
@@ -350,7 +350,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
 
         String compliedQueryString = compiledQuery.toSql();
 
-        assertEquals("SELECT COUNT(*) FROM PUBLIC._CUSTOMERS_ a WHERE a._CREDITLIMIT_ <= ?",
+        assertEquals("SELECT COUNT(*) FROM _PUBLIC_._CUSTOMERS_ a WHERE a._CREDITLIMIT_ <= ?",
                 compliedQueryString.replace('\"', '_'));
 
         DataSet result1 = dataContext.executeQuery(compiledQuery, new Object[] { 11000 });
@@ -475,11 +475,11 @@ public class JdbcDataContextTest extends JdbcTestCase {
                         .executeQuery("SELECT a.\"CUSTOMERNUMBER\", a.\"CUSTOMERNAME\", a.\"CONTACTLASTNAME\", a.\"CONTACTFIRSTNAME\", "
                                 + "a.\"PHONE\", a.\"ADDRESSLINE1\", a.\"ADDRESSLINE2\", a.\"CITY\", a.\"STATE\", "
                                 + "a.\"POSTALCODE\", a.\"COUNTRY\", a.\"SALESREPEMPLOYEENUMBER\", "
-                                + "a.\"CREDITLIMIT\" FROM PUBLIC.\"CUSTOMERS\" a")).andReturn(
+                                + "a.\"CREDITLIMIT\" FROM \"PUBLIC\".\"CUSTOMERS\" a")).andReturn(
                 realStatement.executeQuery("SELECT a.\"CUSTOMERNUMBER\", a.\"CUSTOMERNAME\", a.\"CONTACTLASTNAME\", "
                         + "a.\"CONTACTFIRSTNAME\", a.\"PHONE\", a.\"ADDRESSLINE1\", a.\"ADDRESSLINE2\", a.\"CITY\", "
                         + "a.\"STATE\", a.\"POSTALCODE\", a.\"COUNTRY\", a.\"SALESREPEMPLOYEENUMBER\", "
-                        + "a.\"CREDITLIMIT\" FROM PUBLIC.\"CUSTOMERS\" a"));
+                        + "a.\"CREDITLIMIT\" FROM \"PUBLIC\".\"CUSTOMERS\" a"));
 
         mockStatement.close();
 
@@ -495,7 +495,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
         q.select(table.getColumns());
         assertEquals("SELECT a.\"CUSTOMERNUMBER\", a.\"CUSTOMERNAME\", a.\"CONTACTLASTNAME\", a.\"CONTACTFIRSTNAME\", "
                 + "a.\"PHONE\", a.\"ADDRESSLINE1\", a.\"ADDRESSLINE2\", a.\"CITY\", a.\"STATE\", a.\"POSTALCODE\", "
-                + "a.\"COUNTRY\", a.\"SALESREPEMPLOYEENUMBER\", a.\"CREDITLIMIT\" FROM PUBLIC.\"CUSTOMERS\" a",
+                + "a.\"COUNTRY\", a.\"SALESREPEMPLOYEENUMBER\", a.\"CREDITLIMIT\" FROM \"PUBLIC\".\"CUSTOMERS\" a",
                 q.toString());
         DataSet result = dc.executeQuery(q);
         assertTrue(result.next());
@@ -601,8 +601,8 @@ public class JdbcDataContextTest extends JdbcTestCase {
         q.where(new FilterItem(new SelectItem(employeeNumberColumn1), OperatorType.EQUALS_TO, new SelectItem(
                 employeeNumberColumn2)));
 
-        assertEquals("SELECT c.\"COUNTRY\", SUM(c.\"CREDITLIMIT\") FROM PUBLIC.\"CUSTOMERS\" c, "
-                + "PUBLIC.\"EMPLOYEES\" o WHERE c.\"SALESREPEMPLOYEENUMBER\" = o.\"EMPLOYEENUMBER\" GROUP BY c"
+        assertEquals("SELECT c.\"COUNTRY\", SUM(c.\"CREDITLIMIT\") FROM \"PUBLIC\".\"CUSTOMERS\" c, "
+                + "\"PUBLIC\".\"EMPLOYEES\" o WHERE c.\"SALESREPEMPLOYEENUMBER\" = o.\"EMPLOYEENUMBER\" GROUP BY c"
                 + ".\"COUNTRY\" ORDER BY c.\"COUNTRY\" ASC", q.toString());
 
         DataSet data1 = dataContext1.executeQuery(q);
@@ -644,7 +644,7 @@ public class JdbcDataContextTest extends JdbcTestCase {
         final String compliedQueryString = compiledQuery.toSql();
 
         assertEquals(
-                "SELECT _CUSTOMERS_._CUSTOMERNAME_ FROM PUBLIC._CUSTOMERS_ WHERE _CUSTOMERS_._CUSTOMERNUMBER_ = ?",
+                "SELECT _CUSTOMERS_._CUSTOMERNAME_ FROM _PUBLIC_._CUSTOMERS_ WHERE _CUSTOMERS_._CUSTOMERNUMBER_ = ?",
                 compliedQueryString.replace('\"', '_'));
 
         assertEquals(0, compiledQuery.getActiveLeases());

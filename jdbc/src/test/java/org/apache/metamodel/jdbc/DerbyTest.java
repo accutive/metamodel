@@ -137,7 +137,7 @@ public class DerbyTest extends TestCase {
         assertEquals(5, dc.getFetchSizeCalculator().getFetchSize(q));
 
         assertEquals(
-                "SELECT \"CUSTOMERS\".\"CUSTOMERNUMBER\" FROM APP.\"CUSTOMERS\" WHERE \"CUSTOMERS\".\"ADDRESSLINE2\" IS NOT NULL",
+                "SELECT \"CUSTOMERS\".\"CUSTOMERNUMBER\" FROM \"APP\".\"CUSTOMERS\" WHERE \"CUSTOMERS\".\"ADDRESSLINE2\" IS NOT NULL",
                 q.toSql());
 
         DataSet dataSet = dc.executeQuery(q);
@@ -260,22 +260,22 @@ public class DerbyTest extends TestCase {
 
         q.setMaxRows(5);
 
-        assertEquals("SELECT cus-tomers.\"CUSTOMERNAME\" AS c|o|d|e FROM APP.\"CUSTOMERS\" cus-tomers", q.toString());
+        assertEquals("SELECT cus-tomers.\"CUSTOMERNAME\" AS c|o|d|e FROM \"APP\".\"CUSTOMERS\" cus-tomers", q.toString());
 
         String queryString = queryRewriter.rewriteQuery(q);
-        assertEquals("SELECT \"cus-tomers\".\"CUSTOMERNAME\" AS \"c|o|d|e\" FROM APP.\"CUSTOMERS\" \"cus-tomers\"",
+        assertEquals("SELECT \"cus-tomers\".\"CUSTOMERNAME\" AS \"c|o|d|e\" FROM \"APP\".\"CUSTOMERS\" \"cus-tomers\"",
                 queryString);
 
         // We have to test that no additional quoting characters are added every
         // time we run the rewriting
         queryString = queryRewriter.rewriteQuery(q);
         queryString = queryRewriter.rewriteQuery(q);
-        assertEquals("SELECT \"cus-tomers\".\"CUSTOMERNAME\" AS \"c|o|d|e\" FROM APP.\"CUSTOMERS\" \"cus-tomers\"",
+        assertEquals("SELECT \"cus-tomers\".\"CUSTOMERNAME\" AS \"c|o|d|e\" FROM \"APP\".\"CUSTOMERS\" \"cus-tomers\"",
                 queryString);
 
         // Test that the original query is still the same (ie. it has been
         // cloned for execution)
-        assertEquals("SELECT cus-tomers.\"CUSTOMERNAME\" AS c|o|d|e FROM APP.\"CUSTOMERS\" cus-tomers", q.toString());
+        assertEquals("SELECT cus-tomers.\"CUSTOMERNAME\" AS c|o|d|e FROM \"APP\".\"CUSTOMERS\" cus-tomers", q.toString());
 
         assertEquals(5, dc.getFetchSizeCalculator().getFetchSize(q));
 

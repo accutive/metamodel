@@ -149,7 +149,7 @@ public class HsqldbTest extends TestCase {
                 productsTable.getColumns().get(0), factTable.getColumns().get(0));
 
         assertEquals(
-                "SELECT \"PRODUCTS\".\"PRODUCTCODE\", \"ORDERFACT\".\"ORDERNUMBER\" FROM PUBLIC.\"PRODUCTS\" INNER JOIN PUBLIC.\"ORDERFACT\" ON \"PRODUCTS\".\"PRODUCTCODE\" = \"ORDERFACT\".\"PRODUCTCODE\"",
+                "SELECT \"PRODUCTS\".\"PRODUCTCODE\", \"ORDERFACT\".\"ORDERNUMBER\" FROM \"PUBLIC\".\"PRODUCTS\" INNER JOIN \"PUBLIC\".\"ORDERFACT\" ON \"PRODUCTS\".\"PRODUCTCODE\" = \"ORDERFACT\".\"PRODUCTCODE\"",
                 q.toString());
         assertEquals(25000, dc.getFetchSizeCalculator().getFetchSize(q));
 
@@ -219,22 +219,22 @@ public class HsqldbTest extends TestCase {
                 .select(new SelectItem(productsTable.getColumnByName("PRODUCTCODE")).setAlias("c|o|d|e"));
         q.setMaxRows(5);
 
-        assertEquals("SELECT pro-ducts.\"PRODUCTCODE\" AS c|o|d|e FROM PUBLIC.\"PRODUCTS\" pro-ducts", q.toString());
+        assertEquals("SELECT pro-ducts.\"PRODUCTCODE\" AS c|o|d|e FROM \"PUBLIC\".\"PRODUCTS\" pro-ducts", q.toString());
 
         String queryString = queryRewriter.rewriteQuery(q);
-        assertEquals("SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM PUBLIC.\"PRODUCTS\" \"pro-ducts\"",
+        assertEquals("SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM \"PUBLIC\".\"PRODUCTS\" \"pro-ducts\"",
                 queryString);
 
         // We have to test that no additional quoting characters are added every
         // time we run the rewriting
         queryString = queryRewriter.rewriteQuery(q);
         queryString = queryRewriter.rewriteQuery(q);
-        assertEquals("SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM PUBLIC.\"PRODUCTS\" \"pro-ducts\"",
+        assertEquals("SELECT TOP 5 \"pro-ducts\".\"PRODUCTCODE\" AS \"c|o|d|e\" FROM \"PUBLIC\".\"PRODUCTS\" \"pro-ducts\"",
                 queryString);
 
         // Test that the original query is still the same (ie. it has been
         // cloned for execution)
-        assertEquals("SELECT pro-ducts.\"PRODUCTCODE\" AS c|o|d|e FROM PUBLIC.\"PRODUCTS\" pro-ducts", q.toString());
+        assertEquals("SELECT pro-ducts.\"PRODUCTCODE\" AS c|o|d|e FROM \"PUBLIC\".\"PRODUCTS\" pro-ducts", q.toString());
 
         DataSet data = dc.executeQuery(q);
         assertNotNull(data);
@@ -291,8 +291,8 @@ public class HsqldbTest extends TestCase {
 
         q = dc.query().from(table).selectCount().where("name").isEquals("m'jello").toQuery();
 
-        assertEquals("SELECT COUNT(*) FROM PUBLIC.\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm'jello'", q.toSql());
-        assertEquals("SELECT COUNT(*) FROM PUBLIC.\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm''jello'",
+        assertEquals("SELECT COUNT(*) FROM \"PUBLIC\".\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm'jello'", q.toSql());
+        assertEquals("SELECT COUNT(*) FROM \"PUBLIC\".\"TESTTABLE\" WHERE \"TESTTABLE\".\"NAME\" = 'm''jello'",
                 dc.getQueryRewriter().rewriteQuery(q));
 
         row = MetaModelHelper.executeSingleRowQuery(dc, q);

@@ -36,17 +36,17 @@ public class JdbcUpdateBuilderTest extends JdbcTestCase {
                 Arrays.toString(table.getColumnNames().toArray()));
 
         updateBuilder.value("LASTNAME", "foo").value("firstname", "BAR");
-        assertEquals("UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR'", updateBuilder.createSqlStatement()
+        assertEquals("UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR'", updateBuilder.createSqlStatement()
                 .replaceAll("\"", "_"));
 
         updateBuilder.where("REPORTSTO").isEquals(1234);
         assertEquals(
-                "UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR' WHERE _EMPLOYEES_._REPORTSTO_ = 1234",
+                "UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR' WHERE _EMPLOYEES_._REPORTSTO_ = 1234",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
 
         updateBuilder.where("JOBTITLE").isEquals("Sales rep");
         assertEquals(
-                "UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR' WHERE _EMPLOYEES_._REPORTSTO_ = 1234 AND _EMPLOYEES_._JOBTITLE_ = 'Sales rep'",
+                "UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR' WHERE _EMPLOYEES_._REPORTSTO_ = 1234 AND _EMPLOYEES_._JOBTITLE_ = 'Sales rep'",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
     }
 
@@ -61,7 +61,7 @@ public class JdbcUpdateBuilderTest extends JdbcTestCase {
                 Arrays.toString(table.getColumnNames().toArray()));
 
         updateBuilder.value("LASTNAME", "foo").value("firstname", null);
-        assertEquals("UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_=NULL", updateBuilder.createSqlStatement()
+        assertEquals("UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_=NULL", updateBuilder.createSqlStatement()
                 .replaceAll("\"", "_"));
     }
 
@@ -77,7 +77,7 @@ public class JdbcUpdateBuilderTest extends JdbcTestCase {
                 dataContext), false);
         updateBuilder.value("LASTNAME", "foo").where("email").isNull().where("officecode").isNotNull();
         assertEquals(
-                "UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_=? WHERE _EMPLOYEES_._EMAIL_ IS NULL AND _EMPLOYEES_._OFFICECODE_ IS NOT NULL",
+                "UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_=? WHERE _EMPLOYEES_._EMAIL_ IS NULL AND _EMPLOYEES_._OFFICECODE_ IS NOT NULL",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
     }
 
@@ -92,14 +92,14 @@ public class JdbcUpdateBuilderTest extends JdbcTestCase {
                 Arrays.toString(table.getColumnNames().toArray()));
 
         updateBuilder.value("LASTNAME", "foo").value("firstname", "BAR");
-        assertEquals("UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR'", updateBuilder.createSqlStatement()
+        assertEquals("UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR'", updateBuilder.createSqlStatement()
                 .replaceAll("\"", "_"));
 
         updateBuilder.value(4, "foo@'bar.com");
         updateBuilder.value("REPORTSTO", 1234);
         updateBuilder.where("OFFICECODE").isEquals("ro'om");
         assertEquals(
-                "UPDATE PUBLIC._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR',_EMAIL_='foo@''bar.com',_REPORTSTO_=1234 WHERE _EMPLOYEES_._OFFICECODE_ = 'ro''om'",
+                "UPDATE _PUBLIC_._EMPLOYEES_ SET _LASTNAME_='foo',_FIRSTNAME_='BAR',_EMAIL_='foo@''bar.com',_REPORTSTO_=1234 WHERE _EMPLOYEES_._OFFICECODE_ = 'ro''om'",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
     }
 }

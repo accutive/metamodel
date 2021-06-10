@@ -36,12 +36,12 @@ public class JdbcInsertBuilderTest extends JdbcTestCase {
 				Arrays.toString(table.getColumnNames().toArray()));
 
 		insertBuilder.value("LASTNAME", "foo").value("firstname", "BAR");
-		assertEquals("INSERT INTO PUBLIC._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_) VALUES ('foo','BAR')", insertBuilder.createSqlStatement()
+		assertEquals("INSERT INTO _PUBLIC_._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_) VALUES ('foo','BAR')", insertBuilder.createSqlStatement()
 				.replaceAll("\"", "_"));
 
 		insertBuilder.value(4, "foo@bar.com");
 		insertBuilder.value("REPORTSTO", 1234);
-		assertEquals("INSERT INTO PUBLIC._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_,_EMAIL_,_REPORTSTO_) VALUES ('foo','BAR','foo@bar.com',1234)",
+		assertEquals("INSERT INTO _PUBLIC_._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_,_EMAIL_,_REPORTSTO_) VALUES ('foo','BAR','foo@bar.com',1234)",
 				insertBuilder.createSqlStatement().replaceAll("\"", "_"));
 	}
 
@@ -56,7 +56,7 @@ public class JdbcInsertBuilderTest extends JdbcTestCase {
 				Arrays.toString(table.getColumnNames().toArray()));
 
 		insertBuilder.value("LASTNAME", "foo").value("firstname", null);
-		assertEquals("INSERT INTO PUBLIC._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_) VALUES ('foo',NULL)", insertBuilder.createSqlStatement()
+		assertEquals("INSERT INTO _PUBLIC_._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_) VALUES ('foo',NULL)", insertBuilder.createSqlStatement()
 				.replaceAll("\"", "_"));
 	}
 
@@ -71,13 +71,13 @@ public class JdbcInsertBuilderTest extends JdbcTestCase {
 				Arrays.toString(table.getColumnNames().toArray()));
 
 		insertBuilder.value("LASTNAME", "foo").value("firstname", "BAR");
-		assertEquals("INSERT INTO PUBLIC._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_) VALUES ('foo','BAR')", insertBuilder.createSqlStatement()
+		assertEquals("INSERT INTO _PUBLIC_._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_) VALUES ('foo','BAR')", insertBuilder.createSqlStatement()
 				.replaceAll("\"", "_"));
 
 		insertBuilder.value(4, "foo@'bar.com");
 		insertBuilder.value("REPORTSTO", 1234);
 		assertEquals(
-				"INSERT INTO PUBLIC._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_,_EMAIL_,_REPORTSTO_) VALUES ('foo','BAR','foo@''bar.com',1234)",
+				"INSERT INTO _PUBLIC_._EMPLOYEES_ (_LASTNAME_,_FIRSTNAME_,_EMAIL_,_REPORTSTO_) VALUES ('foo','BAR','foo@''bar.com',1234)",
 				insertBuilder.createSqlStatement().replaceAll("\"", "_"));
 	}
 }

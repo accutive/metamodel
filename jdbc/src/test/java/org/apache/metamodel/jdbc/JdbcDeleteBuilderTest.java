@@ -33,12 +33,12 @@ public class JdbcDeleteBuilderTest extends JdbcTestCase {
                 dataContext), true);
 
         updateBuilder.where("REPORTSTO").eq(1234);
-        assertEquals("DELETE FROM PUBLIC._EMPLOYEES_ WHERE _EMPLOYEES_._REPORTSTO_ = 1234", updateBuilder
+        assertEquals("DELETE FROM _PUBLIC_._EMPLOYEES_ WHERE _EMPLOYEES_._REPORTSTO_ = 1234", updateBuilder
                 .createSqlStatement().replaceAll("\"", "_"));
 
         updateBuilder.where("JOBTITLE").eq("Sales rep");
         assertEquals(
-                "DELETE FROM PUBLIC._EMPLOYEES_ WHERE _EMPLOYEES_._REPORTSTO_ = 1234 AND _EMPLOYEES_._JOBTITLE_ = 'Sales rep'",
+                "DELETE FROM _PUBLIC_._EMPLOYEES_ WHERE _EMPLOYEES_._REPORTSTO_ = 1234 AND _EMPLOYEES_._JOBTITLE_ = 'Sales rep'",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
     }
 
@@ -54,7 +54,7 @@ public class JdbcDeleteBuilderTest extends JdbcTestCase {
 
         updateBuilder.where("firstname").isNull().where("lastname").isNotNull();
         assertEquals(
-                "DELETE FROM PUBLIC._EMPLOYEES_ WHERE _EMPLOYEES_._FIRSTNAME_ IS NULL AND _EMPLOYEES_._LASTNAME_ IS NOT NULL",
+                "DELETE FROM _PUBLIC_._EMPLOYEES_ WHERE _EMPLOYEES_._FIRSTNAME_ IS NULL AND _EMPLOYEES_._LASTNAME_ IS NOT NULL",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
     }
 
@@ -70,7 +70,7 @@ public class JdbcDeleteBuilderTest extends JdbcTestCase {
                 dataContext), false);
         updateBuilder.where("email").isNull().where("officecode").isNotNull();
         assertEquals(
-                "DELETE FROM PUBLIC._EMPLOYEES_ WHERE _EMPLOYEES_._EMAIL_ IS NULL AND _EMPLOYEES_._OFFICECODE_ IS NOT NULL",
+                "DELETE FROM _PUBLIC_._EMPLOYEES_ WHERE _EMPLOYEES_._EMAIL_ IS NULL AND _EMPLOYEES_._OFFICECODE_ IS NOT NULL",
                 updateBuilder.createSqlStatement().replaceAll("\"", "_"));
     }
 
@@ -82,7 +82,7 @@ public class JdbcDeleteBuilderTest extends JdbcTestCase {
                 dataContext), true);
 
         updateBuilder.where("OFFICECODE").isEquals("ro'om");
-        assertEquals("DELETE FROM PUBLIC._EMPLOYEES_ WHERE _EMPLOYEES_._OFFICECODE_ = 'ro''om'", updateBuilder
+        assertEquals("DELETE FROM _PUBLIC_._EMPLOYEES_ WHERE _EMPLOYEES_._OFFICECODE_ = 'ro''om'", updateBuilder
                 .createSqlStatement().replaceAll("\"", "_"));
     }
 }

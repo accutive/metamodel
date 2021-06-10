@@ -82,7 +82,7 @@ public class OpenOfficeDataContextTest extends TestCase {
 				contributorsTable.getColumns());
 
 		assertEquals(
-				"SELECT \"CONTRIBUTORS\".\"ID\", \"CONTRIBUTORS\".\"USERNAME\", \"CONTRIBUTORS\".\"ROLE\", \"CONTRIBUTORS\".\"COUNTRY\" FROM PUBLIC.\"CONTRIBUTORS\"",
+				"SELECT \"CONTRIBUTORS\".\"ID\", \"CONTRIBUTORS\".\"USERNAME\", \"CONTRIBUTORS\".\"ROLE\", \"CONTRIBUTORS\".\"COUNTRY\" FROM \"PUBLIC\".\"CONTRIBUTORS\"",
 				q.toString());
 
 		DataSet data = _dataContext.executeQuery(q);
@@ -99,7 +99,7 @@ public class OpenOfficeDataContextTest extends TestCase {
 				projectsTable.getColumns());
 
 		assertEquals(
-				"SELECT \"projects\".\"ID\", \"projects\".\"project\", \"projects\".\"type\", \"projects\".\"admin\" FROM PUBLIC.\"projects\"",
+				"SELECT \"projects\".\"ID\", \"projects\".\"project\", \"projects\".\"type\", \"projects\".\"admin\" FROM \"PUBLIC\".\"projects\"",
 				q.toString());
 
 		DataSet data = _dataContext.executeQuery(q);

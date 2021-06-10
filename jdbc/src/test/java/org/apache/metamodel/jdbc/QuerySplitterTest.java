@@ -45,7 +45,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 				"c");
 		q.select(employeesTable.getColumns().get(0), customersTable.getColumns().get(0));
 		assertEquals(
-				"SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c",
+				"SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c",
 				q.toString().replace('\"', '_'));
 
 		QuerySplitter qs = new QuerySplitter(dc, q);
@@ -59,7 +59,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 				Arrays.toString(getCounts(dc, splitQueries)));
 
 		assertEquals(
-				"[SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ < 299 OR c._CUSTOMERNUMBER_ IS NULL) AND (e._EMPLOYEENUMBER_ < 1352 OR e._EMPLOYEENUMBER_ IS NULL), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ < 299 OR c._CUSTOMERNUMBER_ IS NULL) AND (e._EMPLOYEENUMBER_ > 1352 OR e._EMPLOYEENUMBER_ = 1352), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ > 299 OR c._CUSTOMERNUMBER_ = 299) AND (e._REPORTSTO_ < 1072 OR e._REPORTSTO_ IS NULL), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ > 299 OR c._CUSTOMERNUMBER_ = 299) AND (e._REPORTSTO_ > 1072 OR e._REPORTSTO_ = 1072) AND (c._SALESREPEMPLOYEENUMBER_ < 1433 OR c._SALESREPEMPLOYEENUMBER_ IS NULL), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ > 299 OR c._CUSTOMERNUMBER_ = 299) AND (e._REPORTSTO_ > 1072 OR e._REPORTSTO_ = 1072) AND (c._SALESREPEMPLOYEENUMBER_ > 1433 OR c._SALESREPEMPLOYEENUMBER_ = 1433)]",
+				"[SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ < 299 OR c._CUSTOMERNUMBER_ IS NULL) AND (e._EMPLOYEENUMBER_ < 1352 OR e._EMPLOYEENUMBER_ IS NULL), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ < 299 OR c._CUSTOMERNUMBER_ IS NULL) AND (e._EMPLOYEENUMBER_ > 1352 OR e._EMPLOYEENUMBER_ = 1352), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ > 299 OR c._CUSTOMERNUMBER_ = 299) AND (e._REPORTSTO_ < 1072 OR e._REPORTSTO_ IS NULL), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ > 299 OR c._CUSTOMERNUMBER_ = 299) AND (e._REPORTSTO_ > 1072 OR e._REPORTSTO_ = 1072) AND (c._SALESREPEMPLOYEENUMBER_ < 1433 OR c._SALESREPEMPLOYEENUMBER_ IS NULL), SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c WHERE (c._CUSTOMERNUMBER_ > 299 OR c._CUSTOMERNUMBER_ = 299) AND (e._REPORTSTO_ > 1072 OR e._REPORTSTO_ = 1072) AND (c._SALESREPEMPLOYEENUMBER_ > 1433 OR c._SALESREPEMPLOYEENUMBER_ = 1433)]",
 				Arrays.toString(splitQueries.toArray()).replace('\"', '_'));
 		assertSameCount(dc, qs, splitQueries);
 		assertEquals(5, splitQueries.size());
@@ -88,7 +88,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 						.getColumns().get(0)));
 		q.groupBy(orderDetailsTable.getColumns().get(0));
 		assertEquals(
-				"SELECT c._ORDERNUMBER_, MAX(e._EMPLOYEENUMBER_) FROM PUBLIC._EMPLOYEES_ e, PUBLIC._ORDERDETAILS_ c GROUP BY c._ORDERNUMBER_",
+				"SELECT c._ORDERNUMBER_, MAX(e._EMPLOYEENUMBER_) FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._ORDERDETAILS_ c GROUP BY c._ORDERNUMBER_",
 				q.toString().replace('\"', '_'));
 
 		QuerySplitter qs = new QuerySplitter(dc, q);
@@ -97,7 +97,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 		List<Query> splitQueries = qs.setMaxRows(250).splitQuery();
 
 		assertEquals(
-				"[SELECT c._ORDERNUMBER_, MAX(e._EMPLOYEENUMBER_) FROM PUBLIC._EMPLOYEES_ e, PUBLIC._ORDERDETAILS_ c WHERE (c._ORDERNUMBER_ < 10262 OR c._ORDERNUMBER_ IS NULL) GROUP BY c._ORDERNUMBER_, SELECT c._ORDERNUMBER_, MAX(e._EMPLOYEENUMBER_) FROM PUBLIC._EMPLOYEES_ e, PUBLIC._ORDERDETAILS_ c WHERE (c._ORDERNUMBER_ > 10262 OR c._ORDERNUMBER_ = 10262) GROUP BY c._ORDERNUMBER_]",
+				"[SELECT c._ORDERNUMBER_, MAX(e._EMPLOYEENUMBER_) FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._ORDERDETAILS_ c WHERE (c._ORDERNUMBER_ < 10262 OR c._ORDERNUMBER_ IS NULL) GROUP BY c._ORDERNUMBER_, SELECT c._ORDERNUMBER_, MAX(e._EMPLOYEENUMBER_) FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._ORDERDETAILS_ c WHERE (c._ORDERNUMBER_ > 10262 OR c._ORDERNUMBER_ = 10262) GROUP BY c._ORDERNUMBER_]",
 				Arrays.toString(splitQueries.toArray()).replace('\"', '_'));
 		assertSameCount(dc, qs, splitQueries);
 		assertEquals(2, splitQueries.size());
@@ -130,7 +130,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 				.select(relationship.getForeignColumns())
 				.select(relationship.getPrimaryColumns());
 		assertEquals(
-				"SELECT _ORDERFACT_._PRODUCTCODE_, _PRODUCTS_._PRODUCTCODE_ FROM PUBLIC._PRODUCTS_ LEFT JOIN PUBLIC._ORDERFACT_ ON _PRODUCTS_._PRODUCTCODE_ = _ORDERFACT_._PRODUCTCODE_",
+				"SELECT _ORDERFACT_._PRODUCTCODE_, _PRODUCTS_._PRODUCTCODE_ FROM _PUBLIC_._PRODUCTS_ LEFT JOIN _PUBLIC_._ORDERFACT_ ON _PRODUCTS_._PRODUCTCODE_ = _ORDERFACT_._PRODUCTCODE_",
 				q.toString().replace('\"', '_'));
 
 		QuerySplitter qs = new QuerySplitter(dc, q);
@@ -157,7 +157,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 				customersTable.getColumns().get(0));
 		sq.select(empSelectItem, custSelectItem);
 		assertEquals(
-				"SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c",
+				"SELECT e._EMPLOYEENUMBER_, c._CUSTOMERNUMBER_ FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c",
 				sq.toString().replace('\"', '_'));
 		Query q = new Query();
 		FromItem sqItem = new FromItem(sq).setAlias("sq");
@@ -169,7 +169,7 @@ public class QuerySplitterTest extends JdbcTestCase {
 		q.select(new SelectItem(custSelectItem, sqItem), new SelectItem(
 				empSelectItem, sqItem));
 		assertEquals(
-				"SELECT sq.c_num, sq.e_num FROM (SELECT e._EMPLOYEENUMBER_ AS e_num, c._CUSTOMERNUMBER_ AS c_num FROM PUBLIC._EMPLOYEES_ e, PUBLIC._CUSTOMERS_ c) sq",
+				"SELECT sq.c_num, sq.e_num FROM (SELECT e._EMPLOYEENUMBER_ AS e_num, c._CUSTOMERNUMBER_ AS c_num FROM _PUBLIC_._EMPLOYEES_ e, _PUBLIC_._CUSTOMERS_ c) sq",
 				q.toString().replace('\"', '_'));
 
 		QuerySplitter qs = new QuerySplitter(dc, q);

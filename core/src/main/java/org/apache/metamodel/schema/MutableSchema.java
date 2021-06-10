@@ -36,6 +36,7 @@ public class MutableSchema extends AbstractSchema implements Serializable,
 	private static final long serialVersionUID = 4465197783868238863L;
 
 	private String _name;
+	protected String _quoteString = null;
 	private final List<Table> _tables;
 
 	public MutableSchema() {
@@ -102,6 +103,10 @@ public class MutableSchema extends AbstractSchema implements Serializable,
 
 	@Override
 	public String getQuote() {
-		return null;
+		return _quoteString;
+	}
+
+	public void setQuote(String quoteString) {
+		this._quoteString = quoteString;
 	}
 }

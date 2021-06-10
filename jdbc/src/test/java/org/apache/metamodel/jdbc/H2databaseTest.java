@@ -168,7 +168,7 @@ public class H2databaseTest extends TestCase {
         Query q = dc.query().from(table).selectCount().and(FunctionType.MAX, ageColumn).and(FunctionType.MIN, ageColumn)
                 .toQuery();
         assertEquals(
-                "SELECT COUNT(*), MAX(\"TEST_TABLE\".\"AGE\"), MIN(\"TEST_TABLE\".\"AGE\") FROM PUBLIC.\"TEST_TABLE\"",
+                "SELECT COUNT(*), MAX(\"TEST_TABLE\".\"AGE\"), MIN(\"TEST_TABLE\".\"AGE\") FROM \"PUBLIC\".\"TEST_TABLE\"",
                 q.toSql());
 
         assertEquals(1, dc.getFetchSizeCalculator().getFetchSize(q));
@@ -186,7 +186,7 @@ public class H2databaseTest extends TestCase {
 
         q = dc.query().from(table).as("t").select(ageColumn).selectCount().where(ageColumn).greaterThan(50).groupBy(
                 ageColumn).toQuery();
-        assertEquals("SELECT t.\"AGE\", COUNT(*) FROM PUBLIC.\"TEST_TABLE\" t WHERE t.\"AGE\" > 50 GROUP BY t.\"AGE\"",
+        assertEquals("SELECT t.\"AGE\", COUNT(*) FROM \"PUBLIC\".\"TEST_TABLE\" t WHERE t.\"AGE\" > 50 GROUP BY t.\"AGE\"",
                 q.toSql());
 
         ds = dc.executeQuery(q);
@@ -320,7 +320,7 @@ public class H2databaseTest extends TestCase {
                 cb.insertInto(writtenTableRef.get()).value("age", 14).value("name", "hello").value("id", 1).execute();
                 JdbcInsertBuilder insertBuilder = (JdbcInsertBuilder) cb.insertInto(writtenTableRef.get()).value("age",
                         15).value("name", "wor'ld").value("id", 2);
-                assertEquals("INSERT INTO PUBLIC.\"TEST_TABLE\" (\"ID\",\"NAME\",\"AGE\") VALUES (?,?,?)", insertBuilder
+                assertEquals("INSERT INTO \"PUBLIC\".\"TEST_TABLE\" (\"ID\",\"NAME\",\"AGE\") VALUES (?,?,?)", insertBuilder
                         .createSqlStatement());
                 insertBuilder.execute();
                 cb.insertInto(writtenTableRef.get()).value("age", 16).value("name", "escobar!").value("id", 3)
@@ -343,7 +343,7 @@ public class H2databaseTest extends TestCase {
             public void run(UpdateCallback callback) {
                 JdbcUpdateBuilder updateCallback = (JdbcUpdateBuilder) callback.update("test_table").value("age", 18)
                         .where("id").greaterThan(1);
-                assertEquals("UPDATE PUBLIC.\"TEST_TABLE\" SET \"AGE\"=? WHERE \"TEST_TABLE\".\"ID\" > ?", updateCallback
+                assertEquals("UPDATE \"PUBLIC\".\"TEST_TABLE\" SET \"AGE\"=? WHERE \"TEST_TABLE\".\"ID\" > ?", updateCallback
                         .createSqlStatement());
                 updateCallback.execute();
             }
@@ -414,7 +414,7 @@ public class H2databaseTest extends TestCase {
                 OperatorType.EQUALS_TO, "hello");
 
         assertEquals(
-                "SELECT a.\"FOO\", b.\"FOO\" FROM PUBLIC.\"TEST_TABLE\" a, PUBLIC.\"TEST_TABLE\" b WHERE a.\"BAR\" = 'hello'",
+                "SELECT a.\"FOO\", b.\"FOO\" FROM \"PUBLIC\".\"TEST_TABLE\" a, \"PUBLIC\".\"TEST_TABLE\" b WHERE a.\"BAR\" = 'hello'",
                 query.toSql());
 
         DataSet ds = dc.executeQuery(query);

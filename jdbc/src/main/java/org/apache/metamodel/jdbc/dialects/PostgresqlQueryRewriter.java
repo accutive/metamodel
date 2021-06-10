@@ -127,19 +127,21 @@ public class PostgresqlQueryRewriter extends LimitOffsetQueryRewriter {
         return super.getResultSetValue(resultSet, columnIndex, column);
     }
 
-    @Override
-    protected String rewriteFromItem(Query query, FromItem item) {
-        String result = super.rewriteFromItem(query, item);
-        Table table = item.getTable();
-        if (table != null) {
-            Schema schema = table.getSchema();
-            if (schema != null) {
-                String schemaName = schema.getName();
-                if (schemaName != null && !schemaName.isEmpty()) {
-                    result = result.replaceFirst(schemaName, '\"' + schema.getName() + '\"');
-                }
-            }
-        }
-        return result;
-    }
+    // no longer needed, as the schema is quoted for most dialects already. This adds additional quotes
+    // and breaks things.
+//    @Override
+//    protected String rewriteFromItem(Query query, FromItem item) {
+//        String result = super.rewriteFromItem(query, item);
+//        Table table = item.getTable();
+//        if (table != null) {
+//            Schema schema = table.getSchema();
+//            if (schema != null) {
+//                String schemaName = schema.getName();
+//                if (schemaName != null && !schemaName.isEmpty()) {
+//                    result = result.replaceFirst(schemaName, '\"' + schema.getName() + '\"');
+//                }
+//            }
+//        }
+//        return result;
+//    }
 }

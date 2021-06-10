@@ -120,6 +120,7 @@ final class JdbcMetadataLoader implements MetadataLoader {
                     .getCatalogName(), schema.getName());
 
             schema.clearTables();
+            schema.setQuote(_identifierQuoteString);
             int tableNumber = -1;
             while (rs.next()) {
                 tableNumber++;
