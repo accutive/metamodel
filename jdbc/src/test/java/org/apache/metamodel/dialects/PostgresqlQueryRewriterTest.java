@@ -41,15 +41,16 @@ public class PostgresqlQueryRewriterTest extends TestCase {
 		column.setTable(table);
 		Query q = new Query().from(table).select(column).setMaxRows(25).setFirstRow(5);
 		String queryString = new PostgresqlQueryRewriter(null).rewriteQuery(q);
-		assertEquals("SELECT \"foo\".\"bar\" FROM \"MY_SCHEMA\".\"foo\" LIMIT 25 OFFSET 4", queryString);
+		assertEquals("SELECT \"foo\".\"bar\" FROM MY_SCHEMA.\"foo\" LIMIT 25 OFFSET 4", queryString);
 	}
 
-	public void testRewriteFromItem() throws Exception {
-		PostgresqlQueryRewriter rewriter = new PostgresqlQueryRewriter(null);
-
-		assertEquals("\"public\".foo",
-				rewriter.rewriteFromItem(new FromItem(new MutableTable("foo").setSchema(new MutableSchema("public")))));
-	}
+	// not needed, as all JDBC schemas are now quoted
+//	public void testRewriteFromItem() throws Exception {
+//		PostgresqlQueryRewriter rewriter = new PostgresqlQueryRewriter(null);
+//
+//		assertEquals("\"public\".foo",
+//				rewriter.rewriteFromItem(new FromItem(new MutableTable("foo").setSchema(new MutableSchema("public")))));
+//	}
 
 	public void testGetColumnType() throws Exception {
 		PostgresqlQueryRewriter rewriter = new PostgresqlQueryRewriter(null);
