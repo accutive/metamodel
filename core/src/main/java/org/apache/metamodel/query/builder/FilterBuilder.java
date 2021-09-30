@@ -20,6 +20,7 @@ package org.apache.metamodel.query.builder;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.metamodel.schema.Column;
 
@@ -113,6 +114,11 @@ public interface FilterBuilder<B> {
     /**
      * Equal to ...
      */
+    public B eq(UUID obj);
+
+    /**
+     * Equal to ...
+     */
     public B eq(Object obj);
 
     /**
@@ -139,6 +145,11 @@ public interface FilterBuilder<B> {
      * Equal to ...
      */
     public B isEquals(Boolean bool);
+
+    /**
+     * Equal to ...
+     */
+    public B isEquals(UUID obj);
 
     /**
      * Equal to ...
@@ -173,6 +184,11 @@ public interface FilterBuilder<B> {
     /**
      * Not equal to ...
      */
+    public B differentFrom(UUID uuid);
+
+    /**
+     * Not equal to ...
+     */
     public B differentFrom(Object obj);
 
     /**
@@ -203,6 +219,11 @@ public interface FilterBuilder<B> {
     /**
      * Not equal to ...
      */
+    public B ne(UUID uuid);
+
+    /**
+     * Not equal to ...
+     */
     public B ne(Object obj);
 
     /**
@@ -214,6 +235,16 @@ public interface FilterBuilder<B> {
      * Greater than ...
      */
     public B gt(Column column);
+
+    /**
+     * Greater than ...
+     */
+    public B greaterThan(UUID uuid);
+
+    /**
+     * Greater than ...
+     */
+    public B gt(UUID uuid);
 
     /**
      * Greater than ...
@@ -283,6 +314,16 @@ public interface FilterBuilder<B> {
     /**
      * Less than ...
      */
+    public B lessThan(UUID uuid);
+
+    /**
+     * Less than ...
+     */
+    public B lt(UUID uuid);
+
+    /**
+     * Less than ...
+     */
     public B lessThan(Object obj);
 
     /**
@@ -348,6 +389,16 @@ public interface FilterBuilder<B> {
     /**
      * Greater than or equals...
      */
+    public B greaterThanOrEquals(UUID uuid);
+
+    /**
+     * Greater than or equals...
+     */
+    public B gte(UUID uuid);
+
+    /**
+     * Greater than or equals...
+     */
     public B greaterThanOrEquals(Object obj);
 
     /**
@@ -394,6 +445,16 @@ public interface FilterBuilder<B> {
      * Less than or equals...
      */
     public B lte(String string);
+
+    /**
+     * Less than or equals...
+     */
+    public B lessThanOrEquals(UUID uuid);
+
+    /**
+     * Less than or equals...
+     */
+    public B lte(UUID uuid);
 
     /**
      * Less than or equals...

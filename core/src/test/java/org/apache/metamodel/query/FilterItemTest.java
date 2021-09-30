@@ -113,6 +113,11 @@ public class FilterItemTest extends TestCase {
         c = new FilterItem(selectItem, OperatorType.GREATER_THAN, "02:30:05.000");
         assertEquals("TimeCol > TIME '02:30:05'", c.toString());
 
+        Column uuidColumn = new MutableColumn("UUIDCol", ColumnType.UUID);
+        selectItem = new SelectItem(uuidColumn);
+        c = new FilterItem(selectItem, OperatorType.GREATER_THAN, "3b79b34a-a5d3-4b2d-952b-42c307b1baaf");
+        assertEquals("UUIDCol > UUID '3b79b34a-a5d3-4b2d-952b-42c307b1baaf'", c.toString());
+
         Column dateColumn = new MutableColumn("DateCol", ColumnType.DATE);
         c = new FilterItem(new SelectItem(dateColumn), OperatorType.GREATER_THAN, "2000-12-31");
         assertEquals("DateCol > DATE '2000-12-31'", c.toString());

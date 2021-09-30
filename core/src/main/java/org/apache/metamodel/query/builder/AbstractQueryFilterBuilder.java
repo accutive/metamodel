@@ -20,6 +20,7 @@ package org.apache.metamodel.query.builder;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.SelectItem;
@@ -108,6 +109,11 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     }
 
     @Override
+    public B isEquals(UUID uuid) {
+        return _filterBuilder.isEquals(uuid);
+    }
+
+    @Override
     public B isEquals(Object obj) {
         return _filterBuilder.isEquals(obj);
     }
@@ -135,6 +141,11 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     @Override
     public B differentFrom(Boolean bool) {
         return _filterBuilder.differentFrom(bool);
+    }
+
+    @Override
+    public B differentFrom(UUID uuid) {
+        return _filterBuilder.differentFrom(uuid);
     }
 
     @Override
@@ -184,6 +195,16 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     @Override
     public B lessThan(String string) {
         return _filterBuilder.lessThan(string);
+    }
+
+    @Override
+    public B lessThan(UUID uuid) {
+        return _filterBuilder.lessThan(uuid);
+    }
+
+    @Override
+    public B lt(UUID uuid) {
+        return _filterBuilder.lt(uuid);
     }
 
     @Override
@@ -237,6 +258,16 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     }
 
     @Override
+    public B greaterThanOrEquals(UUID uuid) {
+        return _filterBuilder.greaterThanOrEquals(uuid);
+    }
+
+    @Override
+    public B gte(UUID uuid) {
+        return _filterBuilder.gte(uuid);
+    }
+
+    @Override
     public B gte(Object obj) {
         return _filterBuilder.greaterThanOrEquals(obj);
     }
@@ -287,6 +318,16 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     }
 
     @Override
+    public B lessThanOrEquals(UUID uuid) {
+        return _filterBuilder.lessThanOrEquals(uuid);
+    }
+
+    @Override
+    public B lte(UUID uuid) {
+        return _filterBuilder.lte(uuid);
+    }
+
+    @Override
     public B lte(Object obj) {
         return _filterBuilder.lessThanOrEquals(obj);
     }
@@ -304,6 +345,16 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     @Override
     public B gt(Column column) {
         return greaterThan(column);
+    }
+
+    @Override
+    public B greaterThan(UUID uuid) {
+        return _filterBuilder.greaterThan(uuid);
+    }
+
+    @Override
+    public B gt(UUID uuid) {
+        return _filterBuilder.gt(uuid);
     }
 
     @Override
@@ -344,6 +395,11 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     }
 
     @Override
+    public B eq(UUID uuid) {
+        return isEquals(uuid);
+    }
+
+    @Override
     public B eq(Column column) {
         return isEquals(column);
     }
@@ -371,6 +427,11 @@ abstract class AbstractQueryFilterBuilder<B> extends GroupedQueryBuilderCallback
     @Override
     public B ne(Boolean bool) {
         return differentFrom(bool);
+    }
+
+    @Override
+    public B ne(UUID uuid) {
+        return _filterBuilder.ne(uuid);
     }
 
     @Override

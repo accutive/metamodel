@@ -55,5 +55,6 @@ public class PostgresqlQueryRewriterTest extends TestCase {
 	public void testGetColumnType() throws Exception {
 		PostgresqlQueryRewriter rewriter = new PostgresqlQueryRewriter(null);
 		assertEquals(ColumnType.BOOLEAN, rewriter.getColumnType(Types.BIT, "bool", -1));
+		assertEquals(ColumnType.MAP, rewriter.getColumnType(Types.OTHER, "json", -1));
 	}
 }

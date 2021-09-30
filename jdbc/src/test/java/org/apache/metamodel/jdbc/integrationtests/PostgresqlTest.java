@@ -231,7 +231,7 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
                     Method method = builder.getClass().getDeclaredMethod("createSqlStatement");
                     method.setAccessible(true);
                     Object result = method.invoke(builder);
-                    assertEquals("INSERT INTO \"public\".\"my_table\" (name,foo) VALUES (?,?)", result.toString());
+                    assertEquals("INSERT INTO \"public\".\"my_table\" (\"name\",\"foo\") VALUES (?,?)", result.toString());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -369,7 +369,7 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
 
         try {
             final DataSet ds = dc.query().from("json_datatypes_table").select("col_json", "col_jsonb").execute();
-            
+
             assertTrue(ds.next());
             assertEquals("Row[values=[{foo=bar}, null]]", ds.getRow().toString());
             assertTrue(ds.getRow().getValue(0) instanceof Map);
@@ -386,6 +386,72 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
             });
         }
 
+    }
+
+    @Test
+    public void testUUIDDatatype() throws Exception {
+        if (!isConfigured()) {
+            return;
+        }
+
+        final JdbcDataContext dc = new JdbcDataContext(getConnection());
+
+        final Schema schema = dc.getDefaultSchema();
+
+        dc.executeUpdate(new UpdateScript() {
+            @Override
+            public void run(UpdateCallback cb) {
+                final Table table = cb.createTable(schema, "uuid_datatype_table").withColumn("id").ofType(ColumnType.UUID)
+                        .ofNativeType("UUID").asPrimaryKey().nullable(false).withColumn("name").ofType(ColumnType.VARCHAR).ofSize(10)
+                        .withColumn("foo").ofType(ColumnType.BOOLEAN).nullable(true).withColumn("bar").ofType(
+                                ColumnType.BOOLEAN).nullable(true).execute();
+                assertEquals("uuid_datatype_table", table.getName());
+            }
+        });
+
+        try {
+            dc.executeUpdate(new UpdateScript() {
+                @Override
+                public void run(UpdateCallback callback) {
+                    // insert one of each of the acceptable forms of UUID
+                    callback.insertInto("uuid_datatype_table").value("id", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11").value("name", "row 1").value("foo", true).execute();
+                    callback.insertInto("uuid_datatype_table").value("id", "A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A12").value("name", "row 2").value("foo", true).execute();
+                    callback.insertInto("uuid_datatype_table").value("id", "{a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13}").value("name", "row 3").value("foo", true).execute();
+                    callback.insertInto("uuid_datatype_table").value("id", "a0eebc999c0b4ef8bb6d6bb9bd380a14").value("name", "row 4").value("foo", true).execute();
+                    callback.insertInto("uuid_datatype_table").value("id", "a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a15").value("name", "row 5").value("foo", true).value("bar", true).execute();
+                    callback.insertInto("uuid_datatype_table").value("id", "{a0eebc99-9c0b4ef8-bb6d6bb9-bd380a16}").value("name", "row 6").value("foo", true).value("bar", true).execute();
+                }
+            });
+
+            DataSet ds = dc.query().from("uuid_datatype_table").select("id").and("name").execute();
+            assertTrue(ds.next());
+            assertEquals("Row[values=[a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11, row 1]]", ds.getRow().toString());
+            assertTrue(ds.next());
+            assertEquals("Row[values=[a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12, row 2]]", ds.getRow().toString());
+            assertTrue(ds.next());
+            assertEquals("Row[values=[a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13, row 3]]", ds.getRow().toString());
+            assertTrue(ds.next());
+            assertEquals("Row[values=[a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14, row 4]]", ds.getRow().toString());
+            assertTrue(ds.next());
+            assertEquals("Row[values=[a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15, row 5]]", ds.getRow().toString());
+            assertTrue(ds.next());
+            assertEquals("Row[values=[a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16, row 6]]", ds.getRow().toString());
+            assertFalse(ds.next());
+            ds.close();
+
+            DataSet whereClauseDataSet = dc.query().from("uuid_datatype_table").select("name")
+                    .where("id").eq("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15").execute();
+            assertTrue(whereClauseDataSet.next());
+            assertEquals("Row[values=[row 5]]", whereClauseDataSet.getRow().toString());
+
+        } finally {
+            dc.executeUpdate(new UpdateScript() {
+                @Override
+                public void run(UpdateCallback callback) {
+                    callback.dropTable("uuid_datatype_table").execute();
+                }
+            });
+        }
     }
 
     /**
@@ -766,7 +832,7 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
         } catch (Exception e) {
             String message = e.getMessage().replaceAll("\n", " ");
             assertEquals(
-                    "java.sql.BatchUpdateException: Batch entry 0 INSERT INTO \"public\".\"my_table\" (\"person name\",age) VALUES ('John Doe','42') was aborted: ERROR: column \"age\" is of type integer but expression is of type character varying   Hint: You will need to rewrite or cast the expression.   Position: 64  Call getNextException to see other errors in the batch.",
+                    "java.sql.BatchUpdateException: Batch entry 0 INSERT INTO \"public\".\"my_table\" (\"person name\",\"age\") VALUES ('John Doe','42') was aborted: ERROR: column \"age\" is of type integer but expression is of type character varying   Hint: You will need to rewrite or cast the expression.   Position: 66  Call getNextException to see other errors in the batch.",
                     message);
         } finally {
             dc.refreshSchemas();
@@ -930,7 +996,7 @@ public class PostgresqlTest extends AbstractJdbIntegrationTest {
         q.orderBy(new OrderByItem(q.getSelectClause().getItem(0)));
 
         assertEquals("SELECT \"products\".\"title\" AS product-title, SUM(\"orderlines\".\"quantity\") AS orderAmount "
-                + "FROM public.\"products\", public.\"orderlines\" "
+                + "FROM \"public\".\"products\", \"public\".\"orderlines\" "
                 + "WHERE \"products\".\"prod_id\" = \"orderlines\".\"prod_id\" " + "GROUP BY \"products\".\"title\" "
                 + "HAVING SUM(\"orderlines\".\"quantity\") > 25 " + "ORDER BY \"products\".\"title\" ASC", q
                         .toString());

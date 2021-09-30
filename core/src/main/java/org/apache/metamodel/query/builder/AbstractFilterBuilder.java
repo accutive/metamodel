@@ -20,6 +20,7 @@ package org.apache.metamodel.query.builder;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.OperatorType;
@@ -121,6 +122,14 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     }
 
     @Override
+    public B isEquals(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("uuid cannot be null");
+        }
+        return applyFilter(new FilterItem(_selectItem, OperatorType.EQUALS_TO, uuid));
+    }
+
+    @Override
     public B isEquals(Boolean bool) {
         if (bool == null) {
             throw new IllegalArgumentException("bool cannot be null");
@@ -145,7 +154,10 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
         if (obj instanceof String) {
             return isEquals((String) obj);
         }
-        throw new UnsupportedOperationException("Argument must be a Boolean, Number, Date or String. Found: " + obj);
+        if (obj instanceof UUID) {
+            return isEquals((UUID) obj);
+        }
+        throw new UnsupportedOperationException("Argument must be a Boolean, Number, Date, UUID or String. Found: " + obj);
     }
 
     @Override
@@ -186,6 +198,14 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
             throw new IllegalArgumentException("bool cannot be null");
         }
         return applyFilter(new FilterItem(_selectItem, OperatorType.DIFFERENT_FROM, bool));
+    }
+
+    @Override
+    public B differentFrom(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("uuid cannot be null");
+        }
+        return applyFilter(new FilterItem(_selectItem, OperatorType.DIFFERENT_FROM, uuid));
     }
 
     @Override
@@ -273,6 +293,19 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     }
 
     @Override
+    public B lessThan(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("uuid cannot be null");
+        }
+        return applyFilter(new FilterItem(_selectItem, OperatorType.LESS_THAN, uuid));
+    }
+
+    @Override
+    public B lt(UUID uuid) {
+        return lessThan(uuid);
+    }
+
+    @Override
     public B lessThan(Object obj) {
         if (obj instanceof Number) {
             return lessThan((Number) obj);
@@ -283,7 +316,10 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
         if (obj instanceof String) {
             return lessThan((String) obj);
         }
-        throw new UnsupportedOperationException("Argument must be a Number, Date or String. Found: " + obj);
+        if (obj instanceof UUID) {
+            return lessThan((UUID) obj);
+        }
+        throw new UnsupportedOperationException("Argument must be a Number, Date, UUID or String. Found: " + obj);
     }
 
     @Override
@@ -297,7 +333,10 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
         if (obj instanceof String) {
             return greaterThan((String) obj);
         }
-        throw new UnsupportedOperationException("Argument must be a Number, Date or String. Found: " + obj);
+        if (obj instanceof UUID) {
+            return greaterThan((UUID) obj);
+        }
+        throw new UnsupportedOperationException("Argument must be a Number, Date, UUID or String. Found: " + obj);
     }
 
     // Greater than or equals
@@ -354,6 +393,19 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     }
 
     @Override
+    public B greaterThanOrEquals(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID cannot be null");
+        }
+        return applyFilter(new FilterItem(_selectItem, OperatorType.GREATER_THAN_OR_EQUAL, uuid));
+    }
+
+    @Override
+    public B gte(UUID uuid) {
+        return greaterThanOrEquals(uuid);
+    }
+
+    @Override
     public B greaterThanOrEquals(Object obj) {
         if (obj instanceof Number) {
             return greaterThanOrEquals((Number) obj);
@@ -364,7 +416,10 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
         if (obj instanceof String) {
             return greaterThanOrEquals((String) obj);
         }
-        throw new UnsupportedOperationException("Argument must be a Number, Date or String. Found: " + obj);
+        if (obj instanceof UUID) {
+            return greaterThanOrEquals((UUID) obj);
+        }
+        throw new UnsupportedOperationException("Argument must be a Number, Date, UUID or String. Found: " + obj);
     }
 
     public B gte(Object obj) {
@@ -425,6 +480,19 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     }
 
     @Override
+    public B lessThanOrEquals(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID cannot be null");
+        }
+        return applyFilter(new FilterItem(_selectItem, OperatorType.LESS_THAN_OR_EQUAL, uuid));
+    }
+
+    @Override
+    public B lte(UUID uuid) {
+        return lessThanOrEquals(uuid);
+    }
+
+    @Override
     public B lessThanOrEquals(Object obj) {
         if (obj instanceof Number) {
             return lessThanOrEquals((Number) obj);
@@ -435,7 +503,10 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
         if (obj instanceof String) {
             return lessThanOrEquals((String) obj);
         }
-        throw new UnsupportedOperationException("Argument must be a Number, Date or String. Found: " + obj);
+        if (obj instanceof UUID) {
+            return lessThanOrEquals((UUID) obj);
+        }
+        throw new UnsupportedOperationException("Argument must be a Number, Date, UUID or String. Found: " + obj);
     }
 
     public B lte(Object obj) {
@@ -462,6 +533,19 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     @Override
     public B gt(Column column) {
         return greaterThan(column);
+    }
+
+    @Override
+    public B greaterThan(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID cannot be null");
+        }
+        return applyFilter(new FilterItem(_selectItem, OperatorType.GREATER_THAN, uuid));
+    }
+
+    @Override
+    public B gt(UUID uuid) {
+        return greaterThan(uuid);
     }
 
     @Override
@@ -502,6 +586,11 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     }
 
     @Override
+    public B eq(UUID uuid) {
+        return isEquals(uuid);
+    }
+
+    @Override
     public B eq(Column column) {
         return isEquals(column);
     }
@@ -529,6 +618,11 @@ public abstract class AbstractFilterBuilder<B> implements FilterBuilder<B> {
     @Override
     public B ne(Boolean bool) {
         return differentFrom(bool);
+    }
+
+    @Override
+    public B ne(UUID uuid) {
+        return differentFrom(uuid);
     }
 
     @Override

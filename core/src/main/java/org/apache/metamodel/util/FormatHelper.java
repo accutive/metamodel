@@ -24,6 +24,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.apache.metamodel.query.QueryParameter;
@@ -61,6 +62,20 @@ public final class FormatHelper {
         format.setGroupingUsed(false);
         format.setMaximumFractionDigits(100);
         return format;
+    }
+
+    public static String formatUUID(Object uuid) {
+        if (!(uuid instanceof UUID || uuid instanceof String)) {
+            return null;
+        }
+        try {
+            UUID testUUID = UUID.fromString(uuid.toString());
+        }
+        catch (IllegalArgumentException e) {
+            // not a UUID
+            return null;
+        }
+        return new StringBuilder("UUID '").append(uuid).append("'").toString();
     }
 
     public static String formatSqlBoolean(ColumnType columnType, boolean b) {
@@ -210,6 +225,9 @@ public final class FormatHelper {
             sb.append(')');
             return sb.toString();
         } else if (isNumber(columnType, value)) {
+            if (columnType != null && columnType.equals(ColumnType.UUID)) {
+                return formatUUID(value);
+            }
             NumberFormat numberFormat = getSqlNumberFormat();
             Number n = NumberComparator.toNumber(value);
             if (n == null) {
@@ -231,6 +249,9 @@ public final class FormatHelper {
             }
             String timeString = formatSqlTime(columnType, date);
             return timeString;
+        } else if (isUUID(columnType, value)) {
+            String uuidString = formatUUID(value);
+            return uuidString;
         } else if (isLiteral(columnType, value)) {
             return '\'' + value.toString() + '\'';
         } else {
@@ -239,6 +260,16 @@ public final class FormatHelper {
             }
             throw new IllegalStateException("Column type not supported: " + columnType);
         }
+    }
+
+    private static boolean isUUID(ColumnType columnType, Object value) {
+        if (columnType == null || columnType == ColumnType.UUID || columnType == ColumnType.OTHER) {
+            String uuidString = formatUUID(value);
+            if (uuidString != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isTimeBased(ColumnType columnType, Object operand) {

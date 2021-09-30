@@ -102,6 +102,17 @@ public class PostgresqlQueryRewriter extends LimitOffsetQueryRewriter {
                 st.setObject(valueIndex, pgo);
             }
             return;
+        case "uuid":
+            assert column.getType() == ColumnType.OTHER;
+            if (value == null) {
+                st.setObject(valueIndex, null);
+            } else {
+                final PGobject pgo = new PGobject();
+                pgo.setType(column.getNativeType());
+                pgo.setValue(value.toString());
+                st.setObject(valueIndex, pgo);
+            }
+            return;
         }
         super.setStatementParameter(st, valueIndex, column, value);
     }
