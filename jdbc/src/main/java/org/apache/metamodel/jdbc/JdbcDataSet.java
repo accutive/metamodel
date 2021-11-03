@@ -18,10 +18,7 @@
  */
 package org.apache.metamodel.jdbc;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.data.AbstractDataSet;
@@ -53,6 +50,7 @@ final class JdbcDataSet extends AbstractDataSet {
     private final boolean _closeConnectionOnCloseDataSet;
     private Row _row;
     private boolean _closed;
+    private boolean _checkIsClosed = false;
 
     /**
      * Constructor used for regular query execution.
@@ -78,13 +76,18 @@ final class JdbcDataSet extends AbstractDataSet {
         _closed = false;
         _compiledQuery = null;
         _lease = null;
+        _checkIsClosed = closesAutomaticallyWhenFullyRead(jdbcDataContext);
+    }
+
+    private boolean closesAutomaticallyWhenFullyRead(JdbcDataContext jdbcDataContext) {
+        return jdbcDataContext.getDatabaseProductName().startsWith(JdbcDataContext.DATABASE_PRODUCT_DB2);
     }
 
     /**
      * Constructor used for compiled query execution
      * 
-     * @param query
-     * @param jdbcDataContext
+     * @param compiledQuery
+     * @param lease
      * @param resultSet
      */
     public JdbcDataSet(JdbcCompiledQuery compiledQuery, JdbcCompiledQueryLease lease, ResultSet resultSet) {
@@ -118,6 +121,16 @@ final class JdbcDataSet extends AbstractDataSet {
     @Override
     public boolean next() throws MetaModelException {
         try {
+            if (_checkIsClosed) {
+                try {
+                    if (_resultSet.isClosed()) {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    // failed - don't use it again for additional rows
+                    _checkIsClosed = false;
+                }
+            }
             boolean result = _resultSet.next();
             if (result) {
                 Object[] values = new Object[getHeader().size()];
