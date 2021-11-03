@@ -18,8 +18,11 @@
  */
 package org.apache.metamodel.jdbc.dialects;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.metamodel.jdbc.JdbcDataContext;
 import org.apache.metamodel.query.FilterItem;
@@ -27,9 +30,11 @@ import org.apache.metamodel.query.FromItem;
 import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.FormatHelper;
 import org.apache.metamodel.util.TimeComparator;
+import org.postgresql.util.PGobject;
 
 /**
  * Query rewriter for IBM DB2
@@ -132,5 +137,20 @@ public class DB2QueryRewriter extends RowNumberQueryRewriter {
         }
         return super.rewriteFilterItem(item);
     }
+
+    @Override
+    public void setStatementParameter(PreparedStatement st, int valueIndex, Column column, Object value)
+            throws SQLException {
+
+        final ColumnType type = (column == null ? null : column.getType());
+
+        if (value instanceof byte[] && type.isLiteral()) {
+            st.setObject(valueIndex, value);
+            return;
+        }
+
+        super.setStatementParameter(st, valueIndex, column, value);
+    }
+
 
 }
