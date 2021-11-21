@@ -18,15 +18,8 @@
  */
 package org.apache.metamodel.jdbc.dialects;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.metamodel.jdbc.JdbcDataContext;
 import org.apache.metamodel.query.FilterItem;
-import org.apache.metamodel.query.FromItem;
 import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
@@ -34,7 +27,11 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.FormatHelper;
 import org.apache.metamodel.util.TimeComparator;
-import org.postgresql.util.PGobject;
+
+import java.sql.Blob;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Date;
 
 /**
  * Query rewriter for IBM DB2
@@ -144,9 +141,16 @@ public class DB2QueryRewriter extends RowNumberQueryRewriter {
 
         final ColumnType type = (column == null ? null : column.getType());
 
-        if (value instanceof byte[] && type.isLiteral()) {
-            st.setObject(valueIndex, value);
-            return;
+        // handle case where data to be inserted is binary, but column type is literal
+        if (type.isLiteral()) {
+            if (value instanceof byte[]) {
+                st.setObject(valueIndex, value);
+                return;
+            }
+            else if(value instanceof Blob) {
+                st.setObject(valueIndex, ((Blob) value).getBytes(1, (int) ((Blob) value).length()));
+                return;
+            }
         }
 
         super.setStatementParameter(st, valueIndex, column, value);
