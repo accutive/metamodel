@@ -119,13 +119,18 @@ public class DB2QueryRewriter extends RowNumberQueryRewriter {
                         final String selectItemString = ((SelectItem) operand).getSameQueryAlias(true);
                         sb.append(selectItemString);
                     } else {
-                        Date date = TimeComparator.toDate(itemOperand);
-                        if (date == null) {
-                            throw new IllegalStateException("Could not convert " + itemOperand + " to date");
+                        if ("?".equals(itemOperand)) {
+                            sb.append("?)");
                         }
+                        else {
+                            Date date = TimeComparator.toDate(itemOperand);
+                            if (date == null) {
+                                throw new IllegalStateException("Could not convert " + itemOperand + " to date");
+                            }
 
-                        final String sqlValue = FormatHelper.formatSqlTime(columnType, date, true, "('", "')");
-                        sb.append(sqlValue);
+                            final String sqlValue = FormatHelper.formatSqlTime(columnType, date, true, "('", "')");
+                            sb.append(sqlValue);
+                        }
                     }
 
                     return sb.toString();
