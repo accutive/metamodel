@@ -25,6 +25,7 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.FormatHelper;
 import org.apache.metamodel.util.TimeComparator;
 
@@ -119,8 +120,9 @@ public class DB2QueryRewriter extends RowNumberQueryRewriter {
                         final String selectItemString = ((SelectItem) operand).getSameQueryAlias(true);
                         sb.append(selectItemString);
                     } else {
-                        if ("?".equals(itemOperand)) {
-                            sb.append("?)");
+                        // allow for parameterized queries
+                        if ("?".equals(itemOperand.toString())) {
+                            sb.append(itemOperand);
                         }
                         else {
                             Date date = TimeComparator.toDate(itemOperand);
