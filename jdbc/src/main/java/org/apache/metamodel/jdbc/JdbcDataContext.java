@@ -917,12 +917,12 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
             } else {
                 update.run(updateCallback);
             }
-            updateCallback.close(true);
+            updateCallback.close(true, null);
         } catch (UncheckedSQLException e) {
-            updateCallback.close(false);
+            updateCallback.close(false, e.getCause());
             throw new RolledBackUpdateException(e.getCause());
         } catch (RuntimeException e) {
-            updateCallback.close(false);
+            updateCallback.close(false, e);
             throw e;
         }
 

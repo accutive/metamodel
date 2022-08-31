@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
+import java.util.concurrent.Executor;
 
 import org.apache.metamodel.AbstractUpdateCallback;
 import org.apache.metamodel.DataContext;
@@ -110,9 +111,9 @@ abstract class JdbcUpdateCallback extends AbstractUpdateCallback implements Upda
         return _connection;
     }
 
-    public final void close(boolean success) {
+    public final void close(boolean success, Exception cause) {
         if (_connection != null) {
-            if (success && _preparedStatement != null) {
+            if (_preparedStatement != null && (!getJdbcDataContext().isSingleConnection() || success)) {
                 closePreparedStatement(_preparedStatement);
             }
 
@@ -128,6 +129,18 @@ abstract class JdbcUpdateCallback extends AbstractUpdateCallback implements Upda
                         }
                     }
                 } finally {
+                    // if this connection returned an exception, abort the connection
+                    // before returning it to the pool (in concordance with contract for SQLRecoverableException)
+                    if (!success && cause instanceof UncheckedSQLException) {
+                        try {
+                            _connection.close();
+                        }
+                        catch (SQLException e) {
+                            logger.error("Exception closing failed connection", e);
+                            throw JdbcUtils.wrapException(e, "close connection after SQLRecoverableException",
+                                    JdbcActionType.OTHER);
+                        }
+                    }
                     getJdbcDataContext().close(_connection);
                 }
             }
@@ -287,5 +300,13 @@ abstract class JdbcUpdateCallback extends AbstractUpdateCallback implements Upda
     public UpdateSummary getUpdateSummary() {
         return _updateSummaryBuilder.build();
     }
+
+    public
+    class ThreadPerTaskExecutor implements Executor {
+        public void execute(Runnable r) {
+            new Thread(r).start();
+        }
+    }
+
 
 }
