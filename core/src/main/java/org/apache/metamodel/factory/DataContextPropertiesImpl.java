@@ -51,6 +51,7 @@ public class DataContextPropertiesImpl implements DataContextProperties {
     public static final String PROPERTY_QUOTE_CHAR = "quote-char";
     public static final String PROPERTY_SEPARATOR_CHAR = "separator-char";
     public static final String PROPERTY_ENCODING = "encoding";
+    public static final String PROPERTY_LINE_ENDING = "line-ending";
     public static final String PROPERTY_SKIP_EMPTY_COLUMNS = "skip-empty-columns";
     public static final String PROPERTY_SKIP_EMPTY_LINES = "skip-empty-lines";
     public static final String PROPERTY_COLUMN_NAME_LINE_NUMBER = "column-name-line-number";
@@ -186,6 +187,11 @@ public class DataContextPropertiesImpl implements DataContextProperties {
     @Override
     public String getEncoding() {
         return getString(PROPERTY_ENCODING);
+    }
+
+    @Override
+    public String getLineEnding() {
+        return getString(PROPERTY_LINE_ENDING);
     }
 
     @Override

@@ -49,6 +49,7 @@ public class CsvDataContextFactory extends AbstractDataContextFactory {
         final char escapeChar = getChar(properties.getEscapeChar(), CsvConfiguration.DEFAULT_ESCAPE_CHAR);
         final boolean failOnInconsistentRowLength = getBoolean(properties.isFailOnInconsistentRowLength(), false);
         final boolean multilineValuesEnabled = getBoolean(properties.isMultilineValuesEnabled(), true);
+        final String lineEnding = getString(properties.getLineEnding(), CsvConfiguration.DEFAULT_LINE_ENDING);
 
         final ColumnNamingStrategy columnNamingStrategy;
         if (properties.getTableDefs() == null) {
@@ -60,7 +61,8 @@ public class CsvDataContextFactory extends AbstractDataContextFactory {
         }
 
         final CsvConfiguration configuration = new CsvConfiguration(columnNameLineNumber, columnNamingStrategy,
-                encoding, separatorChar, quoteChar, escapeChar, failOnInconsistentRowLength, multilineValuesEnabled);
+                encoding, separatorChar, quoteChar, escapeChar, failOnInconsistentRowLength, multilineValuesEnabled,
+                lineEnding);
         return new CsvDataContext(resource, configuration);
     }
 }

@@ -46,6 +46,8 @@ public interface DataContextFactoryParameters {
 
     public abstract String getEncoding();
 
+    public abstract String getLineEnding();
+
     public abstract String getSeparatorChar();
 
     public abstract String getQuoteChar();

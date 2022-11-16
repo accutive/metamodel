@@ -58,6 +58,8 @@ public interface DataContextProperties extends Serializable {
 
     String getEncoding();
 
+    String getLineEnding();
+
     Character getSeparatorChar();
 
     Character getQuoteChar();

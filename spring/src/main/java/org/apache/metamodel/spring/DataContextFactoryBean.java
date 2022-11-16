@@ -45,6 +45,7 @@ public class DataContextFactoryBean implements FactoryBean<DataContext>, DataCon
     private String _skipEmptyLines;
     private String _skipEmptyColumns;
     private String _encoding;
+    private String _lineEnding;
     private String _separatorChar;
     private String _quoteChar;
     private String _escapeChar;
@@ -242,6 +243,16 @@ public class DataContextFactoryBean implements FactoryBean<DataContext>, DataCon
 
     public void setEncoding(String encoding) {
         _encoding = encoding;
+    }
+
+    @Override
+    public String getLineEnding() {
+        return _lineEnding;
+    }
+
+    
+    public void setLineEnding(String lineEnding) {
+        _lineEnding = lineEnding;
     }
 
     @Override

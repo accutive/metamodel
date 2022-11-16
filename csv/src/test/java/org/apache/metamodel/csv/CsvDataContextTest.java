@@ -57,6 +57,11 @@ public class CsvDataContextTest extends TestCase {
     private final CsvConfiguration semicolonConfiguration = new CsvConfiguration(
             CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, "UTF-8", ';', '\'', CsvConfiguration.DEFAULT_ESCAPE_CHAR);
 
+    private final CsvConfiguration windowsLineEndingConfiguration = new CsvConfiguration(
+            CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, "UTF-8", CsvConfiguration.DEFAULT_SEPARATOR_CHAR,
+            CsvConfiguration.DEFAULT_QUOTE_CHAR, CsvConfiguration.DEFAULT_ESCAPE_CHAR, false, false,
+            CsvConfiguration.WINDOWS_LINE_ENDING);
+
     public void testEmptyFileNoColumnHeaderLine() throws Exception {
         final File file = new File("target/testEmptyFileNoColumnHeaderLine.csv");
         FileHelper.copy(new File("src/test/resources/empty_file.csv"), file);
@@ -836,7 +841,8 @@ public class CsvDataContextTest extends TestCase {
         final CsvConfiguration configuration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
                 new CustomColumnNamingStrategy(firstColumnName, secondColumnName, thirdColumnName, fourthColumnName),
                 FileHelper.DEFAULT_ENCODING, CsvConfiguration.DEFAULT_SEPARATOR_CHAR,
-                CsvConfiguration.DEFAULT_QUOTE_CHAR, CsvConfiguration.DEFAULT_ESCAPE_CHAR, false, true);
+                CsvConfiguration.DEFAULT_QUOTE_CHAR, CsvConfiguration.DEFAULT_ESCAPE_CHAR, false, true,
+                CsvConfiguration.DEFAULT_LINE_ENDING);
 
         final DataContext dataContext = new CsvDataContext(new File("src/test/resources/csv_people.csv"),
                 configuration);

@@ -44,9 +44,14 @@ public final class CsvConfiguration extends BaseObject implements Serializable {
     public static final char DEFAULT_SEPARATOR_CHAR = ',';
     public static final char DEFAULT_QUOTE_CHAR = '"';
     public static final char DEFAULT_ESCAPE_CHAR = '\\';
+    public static final String DEFAULT_LINE_ENDING = "\n";
+    public static final String WINDOWS_LINE_ENDING = "\r\n";
+    public static final String MAC_9_LINE_ENDING = "\r";
+    public static final String EBCDIC_LINE_ENDING = "\025";
 
     private final int columnNameLineNumber;
     private final String encoding;
+    private final String lineEnding;
     private final char separatorChar;
     private final char quoteChar;
     private final char escapeChar;
@@ -77,16 +82,23 @@ public final class CsvConfiguration extends BaseObject implements Serializable {
             char escapeChar, boolean failOnInconsistentRowLength) {
         this(columnNameLineNumber, encoding, separatorChar, quoteChar, escapeChar, failOnInconsistentRowLength, true);
     }
-    
+
     public CsvConfiguration(int columnNameLineNumber, String encoding, char separatorChar, char quoteChar,
-            char escapeChar, boolean failOnInconsistentRowLength, boolean multilineValues) {
+                            char escapeChar, boolean failOnInconsistentRowLength, boolean multilineValues) {
         this(columnNameLineNumber, null, encoding, separatorChar, quoteChar, escapeChar, failOnInconsistentRowLength,
-                multilineValues);
+                multilineValues, DEFAULT_LINE_ENDING);
+    }
+
+    public CsvConfiguration(int columnNameLineNumber, String encoding, char separatorChar, char quoteChar,
+                            char escapeChar, boolean failOnInconsistentRowLength, boolean multilineValues,
+                            String lineEnding) {
+        this(columnNameLineNumber, null, encoding, separatorChar, quoteChar, escapeChar, failOnInconsistentRowLength,
+                multilineValues, lineEnding);
     }
 
     public CsvConfiguration(int columnNameLineNumber, ColumnNamingStrategy columnNamingStrategy, String encoding,
             char separatorChar, char quoteChar, char escapeChar, boolean failOnInconsistentRowLength,
-            boolean multilineValues) {
+            boolean multilineValues, String lineEnding) {
         this.columnNameLineNumber = columnNameLineNumber;
         this.encoding = encoding;
         this.separatorChar = separatorChar;
@@ -95,6 +107,7 @@ public final class CsvConfiguration extends BaseObject implements Serializable {
         this.failOnInconsistentRowLength = failOnInconsistentRowLength;
         this.multilineValues = multilineValues;
         this.columnNamingStrategy = columnNamingStrategy;
+        this.lineEnding = lineEnding;
     }
     
     /**
@@ -194,5 +207,9 @@ public final class CsvConfiguration extends BaseObject implements Serializable {
         return "CsvConfiguration[columnNameLineNumber=" + columnNameLineNumber + ", encoding=" + encoding
                 + ", separatorChar=" + separatorChar + ", quoteChar=" + quoteChar + ", escapeChar=" + escapeChar
                 + ", failOnInconsistentRowLength=" + failOnInconsistentRowLength + "]";
+    }
+
+    public String getLineEnding() {
+        return lineEnding;
     }
 }

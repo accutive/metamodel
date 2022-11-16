@@ -66,7 +66,7 @@ public final class CsvWriter {
             }
         }
 
-        sb.append('\n');
+        sb.append(_configuration.getLineEnding());
         return sb.toString();
 
     }

@@ -509,4 +509,32 @@ public final class FileHelper {
         }
         return baos.toByteArray();
     }
+
+//    public static String getLineEndingString(File file) throws IOException {
+//        String lineEnding = "\n"; // default
+//        // open file with a buffered reader
+//        try(BufferedReader bufferedReader = getBufferedReader(file)) {
+//
+//            // read into buffer
+//            final int bufsize = 1000;
+//            int offset = 0;
+//            char[] cbuf = new char[bufsize];
+//            int charsRead;
+//            while ((charsRead = bufferedReader.read(cbuf, offset, bufsize)) > 0){
+//                offset += charsRead;
+//            }
+//            // search for line ending characters
+//            if (str.matches("(?s).*(\\r\\n).*")) {     //Windows //$NON-NLS-1$
+//                return "\r\n"; //$NON-NLS-1$
+//            } else if (str.matches("(?s).*(\\n).*")) { //Unix/Linux //$NON-NLS-1$
+//                return "\n"; //$NON-NLS-1$
+//            } else if (str.matches("(?s).*(\\r).*")) { //Legacy mac os 9. Newer OS X use \n //$NON-NLS-1$
+//                return "\r"; //$NON-NLS-1$
+//            } else {
+//                return "\n";  //fallback onto '\n' if nothing matches. //$NON-NLS-1$
+//            }
+//        }
+//
+//        return lineEnding;
+//    }
 }

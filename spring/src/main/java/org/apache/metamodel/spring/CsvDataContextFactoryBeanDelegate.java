@@ -39,8 +39,9 @@ public class CsvDataContextFactoryBeanDelegate extends AbstractDataContextFactor
         final char escapeChar = getChar(params.getEscapeChar(), CsvConfiguration.DEFAULT_ESCAPE_CHAR);
         final boolean failOnInconsistentRowLength = getBoolean(params.getFailOnInconsistentRowLength(), false);
         final boolean multilineValues = getBoolean(params.getMultilineValues(), true);
+        final String lineEnding = getString(params.getLineEnding(), CsvConfiguration.DEFAULT_LINE_ENDING);
         final CsvConfiguration configuration = new CsvConfiguration(columnNameLineNumber, encoding, separatorChar,
-                quoteChar, escapeChar, failOnInconsistentRowLength, multilineValues);
+                quoteChar, escapeChar, failOnInconsistentRowLength, multilineValues, lineEnding);
         return new CsvDataContext(resource, configuration);
     }
 }
