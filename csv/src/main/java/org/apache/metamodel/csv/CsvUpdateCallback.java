@@ -114,7 +114,7 @@ final class CsvUpdateCallback extends AbstractUpdateCallback implements UpdateCa
 
             if (needsLineBreak) {
                 try {
-                    writer.write('\n');
+                    writer.write(_configuration.getLineEnding());
                 } catch (IOException e) {
                     logger.debug("Failed to insert newline", e);
                 }
@@ -137,7 +137,7 @@ final class CsvUpdateCallback extends AbstractUpdateCallback implements UpdateCa
                 // find the bytes a newline would match under the encoding
                 final byte[] bytesInLineBreak;
                 {
-                    ByteBuffer encodedLineBreak = Charset.forName(configuration.getEncoding()).encode("\n");
+                    ByteBuffer encodedLineBreak = Charset.forName(configuration.getEncoding()).encode(configuration.getLineEnding());
                     bytesInLineBreak = new byte[encodedLineBreak.capacity()];
                     encodedLineBreak.get(bytesInLineBreak);
                 }
