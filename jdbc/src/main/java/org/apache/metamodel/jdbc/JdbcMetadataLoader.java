@@ -438,10 +438,15 @@ final class JdbcMetadataLoader implements MetadataLoader {
 
     private void loadRelations(ResultSet rs, Schema schema) throws SQLException {
         // by using nested maps, we can associate a list of pk/fk columns with
-        // the tables they belong to
+        // the table relations they belong to
         // the result set comes flattened out.
-        Map<Table, Map<Table, ColumnsTuple>> relations = new HashMap<>();
+        Map<String, Map<Table, ColumnsTuple>> relations = new HashMap<>();
         while (rs.next()) {
+
+            String fkName = rs.getString(12);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Processing relation:" + fkName);
+            }
 
             String pkTableName = rs.getString(3);
             String pkColumnName = rs.getString(4);
@@ -476,15 +481,15 @@ final class JdbcMetadataLoader implements MetadataLoader {
                 logger.error("fkColumn={}", fkColumn);
             } else {
 
-                if (!relations.containsKey(pkTable)) {
-                    relations.put(pkTable, new HashMap<>());
+                if (!relations.containsKey(fkName)) {
+                    relations.put(fkName, new HashMap<>());
                 }
 
                 // get or init the columns tuple
-                ColumnsTuple ct = relations.get(pkTable).get(fkTable);
+                ColumnsTuple ct = relations.get(fkName).get(fkTable);
                 if (Objects.isNull(ct)) {
                     ct = new ColumnsTuple();
-                    relations.get(pkTable).put(fkTable, ct);
+                    relations.get(fkName).put(fkTable, ct);
                 }
                 // we can now safely add the columns
                 ct.getPkCols().add(pkColumn);
