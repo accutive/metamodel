@@ -30,6 +30,7 @@ import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.FormatHelper;
 
 public class SQLServerQueryRewriter extends OffsetFetchQueryRewriter {
 
@@ -104,22 +105,28 @@ public class SQLServerQueryRewriter extends OffsetFetchQueryRewriter {
             return super.rewriteFilterItem(item);
         }
 
-        if (operand instanceof Date) {
-            final String nativeType = column.getNativeType();
-            if ("TIMESTAMP".equalsIgnoreCase(nativeType) || "DATETIME".equalsIgnoreCase(nativeType)) {
-                final StringBuilder sb = new StringBuilder();
-                sb.append(selectItem.getSameQueryAlias(true));
-
-                FilterItem.appendOperator(sb, operand, operator);
-
-                final Date date = (Date) operand;
-
-                final DateFormat format = DateUtils.createDateFormat("yyyyMMdd HH:mm:ss.SSS");
-                final String dateTimeValue = "CAST('" + format.format(date) + "' AS DATETIME)";
-
-                sb.append(dateTimeValue);
-                return sb.toString();
+        final String nativeType = column.getNativeType();
+        if ("TIMESTAMP".equalsIgnoreCase(nativeType) || "DATETIME".equalsIgnoreCase(nativeType)) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(selectItem.getSameQueryAlias(true));
+            final Object operandAsDate;
+            if (operand instanceof String) {
+                operandAsDate = FormatHelper.parseSqlTime(column.getType(), (String) operand);
             }
+            else if (operand instanceof Date) {
+                operandAsDate = operand;
+            }
+            else {
+                return super.rewriteFilterItem(item);
+            }
+
+            FilterItem.appendOperator(sb, operandAsDate, operator);
+
+            final DateFormat format = DateUtils.createDateFormat("yyyyMMdd HH:mm:ss.SSS");
+            final String dateTimeValue = "CAST('" + format.format(operandAsDate) + "' AS DATETIME)";
+
+            sb.append(dateTimeValue);
+            return sb.toString();
         }
         return super.rewriteFilterItem(item);
     }

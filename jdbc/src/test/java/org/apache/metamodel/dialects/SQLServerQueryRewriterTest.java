@@ -117,6 +117,7 @@ public class SQLServerQueryRewriterTest extends TestCase {
         MutableColumn timestampColumn = new MutableColumn("timestamp");
         timestampColumn.setType(ColumnType.TIMESTAMP);
         timestampColumn.setNativeType("DATETIME");
+        // test with Date class
         Query q = new Query()
                 .from(table)
                 .select(column)
@@ -127,6 +128,16 @@ public class SQLServerQueryRewriterTest extends TestCase {
         assertEquals(
                 "SELECT MY_SCHEMA.\"foo\".\"bar\", timestamp FROM MY_SCHEMA.\"foo\" WHERE timestamp < CAST('20140628 14:06:00.123' AS DATETIME)",
                 qr.rewriteQuery(q));
+        // test with String class
+        Query qString = new Query()
+                .from(table)
+                .select(column)
+                .select(timestampColumn)
+                .where(new FilterItem(new SelectItem(timestampColumn), OperatorType.LESS_THAN, "2014-06-28 14:06:00.123"));
+
+        assertEquals(
+                "SELECT MY_SCHEMA.\"foo\".\"bar\", timestamp FROM MY_SCHEMA.\"foo\" WHERE timestamp < CAST('20140628 14:06:00.123' AS DATETIME)",
+                qr.rewriteQuery(qString));
     }
 
     public void testSelectMaxRowsWithDistinctRewriting() throws Exception {
