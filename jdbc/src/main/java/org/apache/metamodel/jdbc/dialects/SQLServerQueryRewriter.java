@@ -105,28 +105,22 @@ public class SQLServerQueryRewriter extends OffsetFetchQueryRewriter {
             return super.rewriteFilterItem(item);
         }
 
-        final String nativeType = column.getNativeType();
-        if ("TIMESTAMP".equalsIgnoreCase(nativeType) || "DATETIME".equalsIgnoreCase(nativeType)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(selectItem.getSameQueryAlias(true));
-            final Object operandAsDate;
-            if (operand instanceof String) {
-                operandAsDate = FormatHelper.parseSqlTime(column.getType(), (String) operand);
-            }
-            else if (operand instanceof Date) {
-                operandAsDate = operand;
-            }
-            else {
-                return super.rewriteFilterItem(item);
-            }
+        if (operand instanceof Date) {
+            final String nativeType = column.getNativeType();
+            if ("TIMESTAMP".equalsIgnoreCase(nativeType) || "DATETIME".equalsIgnoreCase(nativeType)) {
+                final StringBuilder sb = new StringBuilder();
+                sb.append(selectItem.getSameQueryAlias(true));
 
-            FilterItem.appendOperator(sb, operandAsDate, operator);
+                FilterItem.appendOperator(sb, operand, operator);
 
-            final DateFormat format = DateUtils.createDateFormat("yyyyMMdd HH:mm:ss.SSS");
-            final String dateTimeValue = "CAST('" + format.format(operandAsDate) + "' AS DATETIME)";
+                final Date date = (Date) operand;
 
-            sb.append(dateTimeValue);
-            return sb.toString();
+                final DateFormat format = DateUtils.createDateFormat("yyyyMMdd HH:mm:ss.SSS");
+                final String dateTimeValue = "CAST('" + format.format(date) + "' AS DATETIME)";
+
+                sb.append(dateTimeValue);
+                return sb.toString();
+            }
         }
         return super.rewriteFilterItem(item);
     }

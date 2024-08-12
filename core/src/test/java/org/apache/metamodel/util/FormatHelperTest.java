@@ -43,15 +43,15 @@ public class FormatHelperTest extends TestCase {
 		assertEquals("1", FormatHelper.formatSqlValue(null, 1));
 		assertEquals("NULL", FormatHelper.formatSqlValue(null, null));
 		assertEquals(
-				"TIMESTAMP '2011-07-24 00:00:00'",
+				"'2011-07-24 00:00:00.000'",
 				FormatHelper.formatSqlValue(ColumnType.TIMESTAMP,
 						DateUtils.get(2011, Month.JULY, 24)));
 		assertEquals(
-				"DATE '2011-07-24'",
+				"'2011-07-24'",
 				FormatHelper.formatSqlValue(ColumnType.DATE,
 						DateUtils.get(2011, Month.JULY, 24)));
 		assertEquals(
-				"TIME '00:00:00'",
+				"'00:00:00.000'",
 				FormatHelper.formatSqlValue(ColumnType.TIME,
 						DateUtils.get(2011, Month.JULY, 24)));
 		assertEquals(

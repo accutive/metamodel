@@ -111,7 +111,7 @@ public class FilterItemTest extends TestCase {
         Column timeColumn = new MutableColumn("TimeCol", ColumnType.TIME);
         selectItem = new SelectItem(timeColumn);
         c = new FilterItem(selectItem, OperatorType.GREATER_THAN, "02:30:05.000");
-        assertEquals("TimeCol > TIME '02:30:05'", c.toString());
+        assertEquals("TimeCol > '02:30:05.000'", c.toString());
 
         Column uuidColumn = new MutableColumn("UUIDCol", ColumnType.UUID);
         selectItem = new SelectItem(uuidColumn);
@@ -120,17 +120,17 @@ public class FilterItemTest extends TestCase {
 
         Column dateColumn = new MutableColumn("DateCol", ColumnType.DATE);
         c = new FilterItem(new SelectItem(dateColumn), OperatorType.GREATER_THAN, "2000-12-31");
-        assertEquals("DateCol > DATE '2000-12-31'", c.toString());
+        assertEquals("DateCol > '2000-12-31'", c.toString());
     }
 
     public void testToStringTimeStamp() throws Exception {
         Column timestampColumn = new MutableColumn("TimestampCol", ColumnType.TIMESTAMP);
         FilterItem c = new FilterItem(new SelectItem(timestampColumn), OperatorType.LESS_THAN,
                 "2000-12-31 02:30:05.007");
-        assertEquals("TimestampCol < TIMESTAMP '2000-12-31 02:30:05'", c.toString());
+        assertEquals("TimestampCol < '2000-12-31 02:30:05.007'", c.toString());
 
         c = new FilterItem(new SelectItem(timestampColumn), OperatorType.LESS_THAN, "2000-12-31 02:30:05");
-        assertEquals("TimestampCol < TIMESTAMP '2000-12-31 02:30:05'", c.toString());
+        assertEquals("TimestampCol < '2000-12-31 02:30:05.000'", c.toString());
 
         Column dateColumn = new MutableColumn("DateCol", ColumnType.DATE);
         c = new FilterItem(new SelectItem(timestampColumn), OperatorType.GREATER_THAN, new SelectItem(dateColumn));

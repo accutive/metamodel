@@ -763,7 +763,7 @@ public class JdbcTestTemplates {
 
         switch (databasePrecision) {
         case SECONDS:
-            assertEquals("Row[values=[1, 2015-10-16 16:33:33]]", ds.getRow().toString());
+            assertEquals("Row[values=[1, 2015-10-16 16:33:33.000]]", ds.getRow().toString());
             break;
         case MILLISECONDS:
             assertEquals("Row[values=[1, 2015-10-16 16:33:33.456]]", ds.getRow().toString());
@@ -782,7 +782,7 @@ public class JdbcTestTemplates {
 
         switch (databasePrecision) {
         case SECONDS:
-            assertEquals("Row[values=[2, 2015-10-16 16:33:34]]", ds.getRow().toString());
+            assertEquals("Row[values=[2, 2015-10-16 16:33:34.000]]", ds.getRow().toString());
             break;
         case MILLISECONDS:
             assertEquals("Row[values=[2, 2015-10-16 16:33:34.683]]", ds.getRow().toString());

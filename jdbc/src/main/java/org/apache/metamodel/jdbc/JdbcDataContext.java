@@ -478,7 +478,10 @@ public class JdbcDataContext extends AbstractDataContext implements UpdateableDa
             try {
                 resultSet.setFetchSize(fetchSize);
             } catch (Exception e) {
-                logger.warn("Could not set fetch size on ResultSet: {}", e.getMessage());
+                // MySQL fetch size may be set to Integer.MIN_VALUE in some cases - ignore exception if true
+                if (Integer.MIN_VALUE != fetchSize) {
+                    logger.warn("Could not set fetch size on ResultSet: {}", e.getMessage());
+                }
             }
 
             if (postProcessFirstRow) {

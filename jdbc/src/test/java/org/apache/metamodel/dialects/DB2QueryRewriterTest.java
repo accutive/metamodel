@@ -179,14 +179,14 @@ public class DB2QueryRewriterTest extends TestCase {
         final Query q = new Query();
         q.select(dateColumn).selectCount();
         q.from(table);
-        q.where(dateColumn, OperatorType.GREATER_THAN, "2012-10-31 08:09:54");
+        q.where(dateColumn, OperatorType.GREATER_THAN, "2012-10-31 08:09:54.321");
         q.groupBy(dateColumn);
         q.having(FunctionType.COUNT, nameColumn, OperatorType.LESS_THAN, 100);
         q.orderBy(dateColumn);
 
         final String sql = new DB2QueryRewriter(null).rewriteQuery(q);
 
-        assertEquals("SELECT sch.tab.age, COUNT(*) FROM sch.tab WHERE sch.tab.age > TIMESTAMP ('2012-10-31 08:09:54') "
+        assertEquals("SELECT sch.tab.age, COUNT(*) FROM sch.tab WHERE sch.tab.age > TIMESTAMP ('2012-10-31 08:09:54.321') "
                 + "GROUP BY sch.tab.age HAVING COUNT(sch.tab.name) < 100 ORDER BY sch.tab.age ASC", sql);
     }
 }

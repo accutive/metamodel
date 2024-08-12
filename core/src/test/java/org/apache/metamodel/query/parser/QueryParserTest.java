@@ -299,7 +299,7 @@ public class QueryParserTest extends TestCase {
         col.setType(ColumnType.TIME);
 
         Query q = MetaModelHelper.parseQuery(dc, "SELECT foo FROM sch.tbl WHERE baz = 10:24");
-        assertEquals("SELECT tbl.foo FROM sch.tbl WHERE tbl.baz = TIME '10:24:00'", q.toSql());
+        assertEquals("SELECT tbl.foo FROM sch.tbl WHERE tbl.baz = '10:24:00.000'", q.toSql());
     }
 
     public void testCoumpoundWhereClause() throws Exception {

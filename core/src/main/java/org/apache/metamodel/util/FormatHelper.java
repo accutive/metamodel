@@ -105,7 +105,7 @@ public final class FormatHelper {
      * @return
      */
     public static String formatSqlTime(ColumnType columnType, Date date) {
-        return formatSqlTime(columnType, date, true);
+        return formatSqlTime(columnType, date, false);
     }
 
     /**
@@ -136,10 +136,10 @@ public final class FormatHelper {
                 format = DateUtils.createDateFormat("yyyy-MM-dd");
                 typePrefix = "DATE";
             } else if (columnType == ColumnType.TIME) {
-                format = DateUtils.createDateFormat("HH:mm:ss");
+                format = DateUtils.createDateFormat("HH:mm:ss.SSS");
                 typePrefix = "TIME";
             } else {
-                format = DateUtils.createDateFormat("yyyy-MM-dd HH:mm:ss");
+                format = DateUtils.createDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 typePrefix = "TIMESTAMP";
             }
 
@@ -248,7 +248,7 @@ public final class FormatHelper {
                 throw new IllegalStateException("Could not convert " + value + " to date");
             }
             String timeString = formatSqlTime(columnType, date);
-            return timeString;
+            return '\'' + timeString + '\'';
         } else if (isUUID(columnType, value)) {
             String uuidString = formatUUID(value);
             return uuidString;
