@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.metamodel.UpdateCallback;
+import org.apache.metamodel.UpdateSummary;
+import org.apache.metamodel.UpdateSummaryBuilder;
 import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,17 +37,21 @@ final class JdbcBatchUpdateCallback extends JdbcUpdateCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcBatchUpdateCallback.class);
 
+    private final UpdateSummaryBuilder _updateSummaryBuilder;
+
     public JdbcBatchUpdateCallback(JdbcDataContext dataContext) {
         super(dataContext);
+        _updateSummaryBuilder = new UpdateSummaryBuilder();
     }
 
     @Override
     protected void closePreparedStatement(PreparedStatement preparedStatement) {
         try {
             int[] results = preparedStatement.executeBatch();
-            if (logger.isDebugEnabled()) {
-                for (int i = 0; i < results.length; i++) {
-                    int result = results[i];
+            for (int i = 0; i < results.length; i++) {
+                int result = results[i];
+                _updateSummaryBuilder.addUpdates(result);
+                if (logger.isDebugEnabled()) {
                     final String resultString;
                     switch (result) {
                     case Statement.SUCCESS_NO_INFO:
@@ -77,4 +83,10 @@ final class JdbcBatchUpdateCallback extends JdbcUpdateCallback {
     protected boolean isGeneratedKeysCollectionEnabled() {
         return false;
     }
+
+    @Override
+    public UpdateSummary getUpdateSummary() {
+        return _updateSummaryBuilder.build();
+    }
+
 }
