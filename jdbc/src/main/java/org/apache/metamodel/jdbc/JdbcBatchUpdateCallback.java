@@ -50,7 +50,9 @@ final class JdbcBatchUpdateCallback extends JdbcUpdateCallback {
             int[] results = preparedStatement.executeBatch();
             for (int i = 0; i < results.length; i++) {
                 int result = results[i];
-                _updateSummaryBuilder.addUpdates(result);
+                if (result > 0) {
+                    _updateSummaryBuilder.addUpdates(result);
+                }
                 if (logger.isDebugEnabled()) {
                     final String resultString;
                     switch (result) {
