@@ -47,7 +47,7 @@ under the License.
 	</scm>
 	<groupId>org.apache.metamodel</groupId>
 	<artifactId>MetaModel</artifactId>
-	<version>5.3.13-ACCUTIVE</version>
+	<version>5.3.14-ACCUTIVE</version>
 	<name>MetaModel</name>
 	<description>MetaModel is a library that encapsulates the differences and enhances 
 		the capabilities of different datastores. Rich querying abilities are
@@ -179,12 +179,12 @@ under the License.
     <repository>
         <id>central</id>
         <name>sharedservices-releases</name>
-        <url>http://10.11.12.101:8081/artifactory/libs-release-local</url>
+              <url>https://secure.accutive.com:8081/artifactory/libs-release-local</url>
     </repository>    
     <snapshotRepository>
       <id>accutive.snapshots.https</id>
       <name>Accutive Development Snapshot Repository</name>
-      <url>http://10.11.12.101:8081/artifactory/libs-snapshot-local</url>
+        <url>https://secure.accutive.com:8081/artifactory/libs-snapshot-local</url>
     </snapshotRepository>
     
 </distributionManagement>
@@ -357,7 +357,7 @@ under the License.
                                 <timeoutSec>60</timeoutSec>
                             </artifactory>
                             <publisher>
-                                <contextUrl>http://10.11.12.101:8081/artifactory</contextUrl>
+                                <contextUrl>https://secure.accutive.com:8081/artifactory</contextUrl>
                                 <username>${username}</username>
                                 <password>${password}</password>
                                 <excludePatterns>*-tests.jar</excludePatterns>

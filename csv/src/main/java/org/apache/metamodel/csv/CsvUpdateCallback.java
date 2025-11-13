@@ -46,6 +46,8 @@ import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.metamodel.util.FileHelper.UTF_8_CHARSET;
+
 final class CsvUpdateCallback extends AbstractUpdateCallback implements UpdateCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvUpdateCallback.class);
@@ -108,7 +110,7 @@ final class CsvUpdateCallback extends AbstractUpdateCallback implements UpdateCa
                 out = _resource.write();
             }
 
-            final boolean insertBom = !append;
+            final boolean insertBom = _configuration.getEncoding().equals(UTF_8_CHARSET) ? false: !append;
 
             final Writer writer = FileHelper.getWriter(out, _configuration.getEncoding(), insertBom);
 
