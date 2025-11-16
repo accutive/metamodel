@@ -106,7 +106,7 @@ public final class FileHelper {
     }
 
     public static Writer getWriter(File file, Charset charset, boolean append) throws IllegalStateException {
-        final boolean insertBom = charset.equals(UTF_8_CHARSET) ? false: !append;
+        final boolean insertBom = charset.equals(UTF_8_ENCODING) ? false: !append;
         return getWriter(file, charset, append, insertBom);
     }
 
